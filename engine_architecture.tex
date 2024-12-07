@@ -47,7 +47,7 @@ A feature's side is a byte sized value, in which each bit defines whether the fe
 
 The tiles described do not contain information about their position or meeple placement. This information is located in the PlacedTile struct. The board is represented as a slice of placed tiles ordered by their placement, moreover it contains the used tile set, for verification whether the tile a player wants to place is legal. Additionally, board includes a city manager used for merging cities, scoring and checking for legal meeples placement in the cities.
 
-A single game is represented by a board, shuffled deck of tiles, and players taking their turns. Each player knows their score, and the number of meeples of each type available to them.
+A single game is represented by a board, shuffled deck of tiles, and players partaking in it. Each player knows their score, and the number of meeples of each type available to them.
 
 Our solution has been designed to be modifiable by adding extensions to the game. Generalizations, such as meeple type or feature type, allow for the easy implementation of new potential features e.g., rivers.
 
