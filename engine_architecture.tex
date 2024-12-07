@@ -64,7 +64,7 @@ The game engine is capable of handling multiple game instances, by using Go pipe
 \begin{itemize}
     \item CloneGame - used for creating a separate clone of a game. It allows the agent to expand the game tree, and each clone can be modified by the agent, by simulating its next potential move.
     \item GetRemainingTiles - returns all available tiles that have not yet been placed. With this data, the agent can expand the game tree for each possible move that might occur. The returned tiles come with information about their probability.
-    \item GetLegalMoves - returns all legal moves for a given tile. It considers where tile can be placed and where the possible meeple placement on it.
+    \item GetLegalMoves - returns all legal moves for a given tile. It considers where the tile can be placed and where are the possible meeple placements on it.
     \item GetMidGameScore - returns the information about the score for all players, calculated as if the game has just finished.
     \item PlayTurn - allows the agent to play a turn using a given tile, and modifies the game state. It returns the new state of the game 
 \end{itemize}
