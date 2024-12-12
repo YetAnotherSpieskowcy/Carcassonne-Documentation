@@ -1,10 +1,6 @@
-TEX = xelatex
-BIB = biber
+TEX = latexmk
 
 %.tex: 
-	$(TEX) $@
-	$(BIB) main
-	$(TEX) $@
 	$(TEX) $@
 
 clean:
