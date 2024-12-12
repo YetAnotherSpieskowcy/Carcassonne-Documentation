@@ -1,4 +1,4 @@
-TEX = xelatex
+TEX = latexmk
 
 %.tex: 
 	$(TEX) $@
