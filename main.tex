@@ -6,9 +6,16 @@
  {\bf Abstract} 
 } \def\endabstract{\par}
 
+\usepackage[backend=biber, style=numeric, bibstyle=ieee,
+           sorting=none, isbn=false, urldate=ymd,
+           doi=false, url=true]{biblatex}
+\addbibresource{bibliography/bibliography.bib}
+\renewbibmacro{in:}{}
+\renewcommand*{\bibfont}{\small}
+\newcommand{\bibliographyname}{Literature}
 
 \begin{document}
-\title{Journal of Artificial Intelligence and Soft Computing Research Sample Paper}
+\title{Solving the Carcassonne board game using reinforcement learning agents}
 
 
 \maketitle
@@ -16,8 +23,7 @@
 Your abstract goes here... Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur dignissim urna, a rhoncus dolor venenatis adipiscing. Phasellus viverra aliquam fringilla. Praesent mattis diam id ipsum placerat a laoreet diam tempus. Quisque eu leo ut sapien ultricies gravida ac sed turpis. Donec nibh enim, pretium a sagittis et, varius non nulla. Vivamus enim augue, condimentum eget convallis hendrerit, mattis ut lectus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin semper libero augue. Praesent auctor ligula sit amet quam molestie adipiscing. Mauris vehicula congue mollis. Duis tincidunt interdum purus quis congue. Integer vel orci mauris. Curabitur rutrum tincidunt mi ut elementum. Nunc non massa nunc. Donec ultricies ipsum ac risus sollicitudin porta. Phasellus elementum odio et leo consectetur consectetur. 
 \end{abstract}
 
-\section{Introduction}
-The paper concerns novel techniques ....
+\include{sections/introduction.tex}
 
 \section{Main Results}
 New sections should not start with directly a subsection, rather with short section introduction. 
@@ -28,14 +34,5 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur digniss
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur dignissim urna, a rhoncus dolor venenatis adipiscing. Phasellus viverra aliquam fringilla. Praesent mattis diam id ipsum placerat a laoreet diam tempus. Quisque eu leo ut sapien ultricies gravida ac sed turpis. Donec nibh enim, pretium a sagittis et, varius non nulla. Vivamus enim augue, condimentum eget convallis hendrerit, mattis ut lectus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin semper libero augue. Praesent auctor ligula sit amet quam molestie adipiscing. Mauris vehicula congue mollis. Duis tincidunt interdum purus quis congue. Integer vel orci mauris. Curabitur rutrum tincidunt mi ut elementum. Nunc non massa nunc. Donec ultricies ipsum ac risus sollicitudin porta. Phasellus elementum odio et leo consectetur consectetur. 
 
 
-\begin{thebibliography}{00}
-\bibitem{samplejournal}
-N. Author, Title of paper, Title of the journal, volume, year,
-pages.
-\bibitem{samplebook}
-N. Author, Title of book, Publisher, place and
-year.
-\bibitem{samplechapter}
-N. Author, Title of paper, In: Title of monograph, name(s) of editor, publisher, place and year, pages.
-\end{thebibliography}
+\printbibliography[title=\bibliographyname]
 \end{document}
