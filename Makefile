@@ -1,6 +1,10 @@
 TEX = xelatex
+BIB = biber
 
 %.tex: 
+	$(TEX) $@
+	$(BIB) main
+	$(TEX) $@
 	$(TEX) $@
 
 clean:
