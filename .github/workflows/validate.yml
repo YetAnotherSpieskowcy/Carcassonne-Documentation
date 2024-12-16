@@ -20,7 +20,7 @@ jobs:
         run: apt-get update && apt-get -y install plantuml
       - name: Validate LaTeX document
         run: |
-          make -B main.tex
+          make -B
       - name: Upload document
         uses: actions/upload-artifact@v4
         with:
