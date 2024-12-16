@@ -1,0 +1,34 @@
+@startuml
+
+
+node CPU {
+  package GameEngine {
+    queue BatchBuffer
+    agent Worker1
+    agent Worker2
+    portout LoggerOutput
+  }
+  component Visualiser
+  component TrainingSupervisor
+}
+
+node GPU {
+  component "Pytorch/CUDA" as cuda
+}
+
+artifact gameLog
+
+BatchBuffer --> Worker1
+BatchBuffer --> Worker2
+
+LoggerOutput -up-> gameLog
+
+Visualiser -up- gameLog
+
+TrainingSupervisor -up[thickness=4]-> GameEngine : "Action"
+GameEngine -do[thickness=4]-> TrainingSupervisor : "NewGameState"
+
+TrainingSupervisor -do[thickness=4]->  cuda : "NewGameState"
+cuda -up[thickness=4]->  TrainingSupervisor : "Action"
+
+@enduml
