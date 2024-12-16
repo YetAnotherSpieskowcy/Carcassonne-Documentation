@@ -88,11 +88,57 @@ A single game is represented by a board, shuffled deck of tiles, and players par
 
 Our solution has been designed to be modifiable by adding extensions to the game. Generalizations, such as meeple type or feature type, allow for the easy implementation of new potential features e.g., rivers.
 
-\subsection{Execution flow}
+\subsection{Game flow}
 % Opisanie wykonywanych akcji podejmowanych przez silnik gry: wylosowanie kafelka ze stosu, wyliczenie legalnych ułożeń kafelka, wybór położenia i wyliczanie punktacji za jego położenie.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur dignissim urna, a rhoncus dolor venenatis adipiscing. Phasellus viverra aliquam fringilla. Praesent mattis diam id ipsum placerat a laoreet diam tempus. Quisque eu leo ut sapien ultricies gravida ac sed turpis. Donec nibh enim, pretium a sagittis et, varius non nulla. Vivamus enim augue, condimentum eget convallis hendrerit, mattis ut lectus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin semper libero augue. Praesent auctor ligula sit amet quam molestie adipiscing. Mauris vehicula congue mollis. Duis tincidunt interdum purus quis congue. Integer vel orci mauris. Curabitur rutrum tincidunt mi ut elementum. Nunc non massa nunc. Donec ultricies ipsum ac risus sollicitudin porta. Phasellus elementum odio et leo consectetur consectetur. 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur dignissim urna, a rhoncus dolor venenatis adipiscing. Phasellus viverra aliquam fringilla. Praesent mattis diam id ipsum placerat a laoreet diam tempus. Quisque eu leo ut sapien ultricies gravida ac sed turpis. Donec nibh enim, pretium a sagittis et, varius non nulla. Vivamus enim augue, condimentum eget convallis hendrerit, mattis ut lectus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin semper libero augue. Praesent auctor ligula sit amet quam molestie adipiscing. Mauris vehicula congue mollis. Duis tincidunt interdum purus quis congue. Integer vel orci mauris. Curabitur rutrum tincidunt mi ut elementum. Nunc non massa nunc. Donec ultricies ipsum ac risus sollicitudin porta. Phasellus elementum odio et leo consectetur consectetur. 
+This section will present the whole flow of the game and the way it was implemented in the engine.
+\ref{fig:GameFlow} shows a state diagram of the game.
+
+\begin{figure*}
+	\centering
+	\scalebox{.42}{\input{figures/state-diagram.tex}}
+	\caption{Carcassonne's state diagram}
+	\label{fig:GameFlow}
+\end{figure*}
+
+Before the game can start, a few actions need to be performed as part of the \textbf{Preparation} stage:
+\begin{itemize}
+	\item putting a start tile on the board,
+	\item generating a stack of all (remaining) tiles in random order,
+	\item setting the figure count for each player to $7$,
+	\item resetting the scores of all players to 0,
+	\item choosing the player order.
+\end{itemize}
+In the implementation these steps are executed when a new game object (along with its board
+and players) is created. The player order is fixed and the stack is internal to the engine
+to avoid leaking its order to the agents.
+
+Once the game starts, the players take turns with the drawn tiles. The engine takes tiles from
+the top of game's stack of remaining tiles (\textbf{Tile draw}) until it finds one that can be
+placed somewhere on the board which it then includes as part of the state passed to the agent.
+When there are no longer any tiles on the stack, the engine proceeds to
+the \textbf{Final scoring} stage (described later).
+
+Once the agent knows the tile it needs to place, it needs to choose \textbf{Tile placement} and,
+if it has any figures, \textbf{Figure placement}. In the implementation, this is performed
+as a single action - the agent has to choose both the position/rotation of the tile and the feature
+to put a meeple on (if any) which it then sends as input to play the turn.
+The engine allows the agent to ask for valid tile placements as well as valid features to
+place meeple on for the given tile, taking into account whether that feature (which can spread
+over several tiles) does not already have a meeple placed. When a meeple is placed,
+the player's meeple count is decremented by $1$.
+
+After the tile is placed (following the validation of the move by the engine),
+we need to proceed with \textbf{Feature scoring}. During this stage, all features that have been
+completed after the tile was placed have to be identified, the control over them needs to be resolved,
+and then points need to be awarded to the controlling players and their meeple counts updated.
+The implementation performs this when handling the request of placing a tile (with meeple) on the board.
+
+After \textbf{Feature scoring}, the next player takes a turn and the game continues
+until the stack of remaining tiles is empty. To get the final results,
+\textbf{Final scoring} is performed after emptying the stack. This consists of scoring
+all uncompleted features and all features known as end-of-game features
+(in the base game, just fields).
 
 \subsection{Communication within a system}
 % Opisanie komunikacji pomiędzy silnikiem gry, a sieciami neuronowymi uczonymi na karcie graficznej. Aktualizacja stanu gry w zależności od akcji podejmowanych przez agenta.
