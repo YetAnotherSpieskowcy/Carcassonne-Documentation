@@ -1,7 +1,5 @@
-TEX = latexmk
-
-%.tex: 
-	$(TEX) $@
+main.pdf: main.tex
+	latexmk -pdf $<
 
 clean:
-	@-rm *.aux *.bbl *.bcf *.blg *.log *.lot *.lof *.pdf *.out *.run.xml *.toc 2> /dev/null
+	latexmk -CA
