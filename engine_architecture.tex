@@ -1,5 +1,9 @@
 \section{Game engine architecture}
-New sections should not start with directly a subsection, rather with short section introduction. 
+The game engine forms an environment for the agent by keeping track of the game state (including scores), providing the available actions (moves), and generating possible future states and their probabilities in the game tree based on the current knowledge.
+The number of possible states in Carcassonne quickly rises as more tiles are placed on the board leading to its high branching factor ($b = 55$ on average \cite{MasterThesisCarcassonne}).
+To maximize the number of states that can be included in the search tree, the team opted to implement the game engine from scratch using a fast compilable language to later bridge it with an agent implemented in a language that is better suited for developing AI applications.
+
+This section will focus on the architecture of this engine and how the communication within the whole system works.
 
 \subsection{Overview of architecture}
 % Opisanie architektury silnika, sposobu komunikacji między komponentami, a także za co one odpowiadają.
