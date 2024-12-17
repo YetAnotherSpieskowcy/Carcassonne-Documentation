@@ -1,5 +1,6 @@
 \documentclass[11pt,twocolumn]{article}
 \usepackage{pslatex, graphicx, amssymb, amsmath}
+\usepackage{tikz}
 %%%% Redefine abstract environment
 \def\abstract{
 \typeout{Abstract}
@@ -19,6 +20,8 @@ Your abstract goes here... Lorem ipsum dolor sit amet, consectetur adipiscing el
 \section{Introduction}
 The paper concerns novel techniques ....
 
+\input{engine_architecture.tex}
+
 \section{Main Results}
 New sections should not start with directly a subsection, rather with short section introduction. 
 
@@ -29,6 +32,16 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur digniss
 
 
 \begin{thebibliography}{00}
+\bibitem{CarcassoneRules}
+K. Wrede, Carcassonne rules, Z-Man Games, 2016.
+% https://images.zmangames.com/filer\_public/d5/20/d5208d61-8583-478b-a06d-b49fc9cd7aaa/zm7810\_carcassonne\_rules.pdf
+
+\bibitem{GolangPipeline}
+S. Ajmani, Go Concurrency Patterns: Pipelines and cancellation, The Go Blog, 2014: https://go.dev/blog/pipelines
+
+\bibitem{AlphaGoAlgorithm}
+some article about alpha go algorithm
+
 \bibitem{samplejournal}
 N. Author, Title of paper, Title of the journal, volume, year,
 pages.
