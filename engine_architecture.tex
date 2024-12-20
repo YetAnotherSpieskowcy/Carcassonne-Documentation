@@ -79,7 +79,7 @@ To provide the neural network with the game state, a serialization process is re
 In the project we had two types of benchmark tests to measure the system efficiency. The first one are feature tests, the second one are engine request tests.
 
 \subsubsection{Feature tests}
-Feature test were measuring the time of playing turn using tiles containg only one type of feature. These test were supposed to test if placing the tile or scoring it took too long. Placing and scoring features were tested in two ways:
+Feature test were measuring the time of playing turns using tiles containg only one type of feature. These tests were supposed to test if placing the tile or scoring it took too long. Placing and scoring features were tested in two ways:
 \begin{itemize}
 	\item A game was played where each tile was placed on the right to the previous one, resulting in a long row of tiles containing that feature.
 	\item Many small games, each resulting in a short row of tiles containing that feature.
@@ -93,16 +93,17 @@ We found a few solutions which  accelerated the system:
 \begin{itemize}
 	\item not holding the shields positions in the city, but only a shield count in the city
 	\item deacreasing the size of enum types such as feature type and shield flag to single byte.
+\item deacreasing the size if position to single byte int.
 	\item allowing engine to run games on multiple threads
 	\item allowing to compare tile and placed tile, without the need to convert one to another
 \end{itemize} 
 
-Those solutions resulted in a slight speed of the system.
+Those solutions resulted in a speed up of the system.
 
 Other solutions we propose:
 \begin{itemize}
-	\item convert all tiles to binary tile of constant size
-	\item 
+	\item Convert all tiles to binary tile of a constant size.
+	\item Allow engine to be called on multiple threads (threadsafe)
 \end{itemize} 
 
 
