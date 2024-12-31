@@ -1,7 +1,17 @@
 \section{Game engine architecture}
-The game engine forms an environment for the agent by keeping track of the game state (including scores), providing the available actions (moves), and generating possible future states and their probabilities in the game tree based on the current knowledge.
-The number of possible states in Carcassonne quickly rises as more tiles are placed on the board leading to its high branching factor ($b = 55$ on average \cite{MasterThesisCarcassonne}).
-To maximize the number of states that can be included in the search tree, the team opted to implement the game engine from scratch using a fast compilable language to later bridge it with an agent implemented in a language that is better suited for developing AI applications.
+The game engine forms an environment for the agent by keeping track of the game state
+(including scores), providing the available actions (moves), and generating possible
+future states and their probabilities in the game tree based on the current knowledge.
+The number of possible states in Carcassonne quickly rises as more tiles are placed on
+the board leading to its high branching factor ($b = 55$ on average \cite{MasterThesisCarcassonne}).
+To maximize the number of states that can be included in the search tree,
+the team opted to implement the game engine from scratch using a fast compilable
+language to later bridge it with an agent implemented in a language
+that is better suited for developing AI applications.
+
+Originally, the engine was supposed to be extended to support some game expansions
+but eventually, this work had to be dropped due to slower-than-anticipated progress on
+the core aspects of the project.
 
 This section will focus on the architecture of this engine and how the communication within the whole system works.
 
@@ -9,7 +19,7 @@ This section will focus on the architecture of this engine and how the communica
 % Opisanie architektury silnika, sposobu komunikacji między komponentami, a także za co one odpowiadają.
 
 In this section, the project of game architecture will be discussed.
-\ref{fig:SystemArchitecture} shows a diagram of the whole system as implemented by the team.
+Figure \ref{fig:SystemArchitecture} shows a diagram of the whole system as implemented by the team.
 Computations related to processing games are performed on a CPU,
 while agents should be trained on a GPU.
 
@@ -21,9 +31,9 @@ while agents should be trained on a GPU.
 \end{figure*}
 
 The GameEngine is responsible for evaluating requests it receives from the agents
-ensuring that the Carcassonne's rule set is followed. It maintains currently active games,
+ensuring that Carcassonne's rule set is followed. It maintains currently active games,
 exposes the current state to the agents, generates possible moves for the given input,
-and allows to simulate what game state a sequence of actions will lead to (before performing it
+and allows simulation of what game state a sequence of actions will lead to (before performing it
 on an active game). Internally, GameEngine distributes the requests it receives among
 multiple workers (lightweight threads) that can evaluate them simultaneously. Actions that
 require state transitions are performed on a state's clone, while read-only operations
@@ -34,7 +44,7 @@ allowing for later consumption by Visualiser. Visualiser parses the logs
 and presents the game in a graphical form, allowing for analysis by humans.
 
 TrainingSupervisor is responsible for managing communication and supervising agents' training.
-It should optimize communication by reducing data transfer between CPU and GPU.
+It should optimise communication by reducing data transfer between CPU and GPU.
 
 The GameEngine (and Visualiser) is implemented in Go, while the agent and TrainingSupervisor
 are implemented in Python. The use of Go for the engine was meant to allow for better performance of
@@ -42,7 +52,7 @@ the rule engine but it means that the TrainingSupervisor cannot communicate with
 To solve this, the team used the gopy project \cite{gopy} to automatically generate
 Python bindings \cite{LanguageBindings} for the Go package. This leads to a larger overhead than
 using manually-written CPython extension would but this has been considered acceptable as most of
-CPU-bound work happens in the GameEngine.
+the CPU-bound work happens in the GameEngine itself, not at the communication layer.
 
 \subsection{Components of a solution}
 % Opisanie elementów z jakich się składa rozgrywka m.in.: kafelki i ich elementy, gracze, a także uwzględnione rozszerzenia gry Carcassonne.
@@ -92,7 +102,7 @@ Our solution has been designed to be modifiable by adding extensions to the game
 % Opisanie wykonywanych akcji podejmowanych przez silnik gry: wylosowanie kafelka ze stosu, wyliczenie legalnych ułożeń kafelka, wybór położenia i wyliczanie punktacji za jego położenie.
 
 This section will present the whole flow of the game and the way it was implemented in the engine.
-\ref{fig:GameFlow} shows a state diagram of the game.
+Figure \ref{fig:GameFlow} shows a state diagram of the game.
 
 \begin{figure*}
 	\centering
@@ -106,18 +116,18 @@ Before the game can start, a few actions need to be performed as part of the \te
 	\item putting a start tile on the board,
 	\item generating a stack of all (remaining) tiles in random order,
 	\item setting the figure count for each player to $7$,
-	\item resetting the scores of all players to 0,
+	\item resetting the scores of all players to $0$,
 	\item choosing the player order.
 \end{itemize}
-In the implementation these steps are executed when a new game object (along with its board
+In the implementation, these steps are executed when a new game object (along with its board
 and players) is created. The player order is fixed and the stack is internal to the engine
 to avoid leaking its order to the agents.
 
 Once the game starts, the players take turns with the drawn tiles. The engine takes tiles from
 the top of game's stack of remaining tiles (\textbf{Tile draw}) until it finds one that can be
 placed somewhere on the board which it then includes as part of the state passed to the agent.
-When there are no longer any tiles on the stack, the engine proceeds to
-the \textbf{Final scoring} stage (described later).
+When no tiles are left on the stack, the engine proceeds to the \textbf{Final scoring} stage
+(described later).
 
 Once the agent knows the tile it needs to place, it needs to choose \textbf{Tile placement} and,
 if it has any figures, \textbf{Figure placement}. In the implementation, this is performed
