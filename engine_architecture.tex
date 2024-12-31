@@ -10,9 +10,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur digniss
 \subsection{Components of a solution}
 % Opisanie elementów z jakich się składa rozgrywka m.in.: kafelki i ich elementy, gracze, a także uwzględnione rozszerzenia gry Carcassonne.
 
-The game Carcassone is played by placing tiles \cite{CarcassoneRules}. Each tile is represented by a set of features on it. All features are defined by their type, such as road, city, field or monastery, a modifier that modifies the calculation process, and the sides which indicate on which edges the feature is present. In this project there is only one modifier used - the shield. The engine was designed to accommodate game extensions. 
+The game Carcassone is played by placing tiles \cite{CarcassoneRules}. Each tile is represented by a set of features on it. All features are defined by their type, such as road, city, field or monastery, a modifier that modifies the calculation process, and the sides which indicate on which edges the feature is present. In this project, there is only one modifier used - the shield. The engine was designed to accommodate game extensions.
 
-A feature's side is a byte sized value, in which each bit defines whether the feature is present on a specific half of the tile's edge as shown on Figure \ref{fig:SIDES}. Features such as roads, are represented by a whole edge formed by combining two sides e.g., the TopLeft and TopRight sides.
+A feature's side is a byte-sized value, in which each bit defines whether the feature is present on a specific half of the tile's edge as shown on Figure \ref{fig:SIDES}. Features such as roads, are represented by a whole edge formed by combining two sides e.g., the TopLeft and TopRight sides.
 \begin{figure}
     \centering
     \begin{tikzpicture}
@@ -45,11 +45,11 @@ A feature's side is a byte sized value, in which each bit defines whether the fe
     \caption{Side representation} \label{fig:SIDES}
 \end{figure}
 
-The tiles described do not contain information about their position or meeple placement. This information is located in the PlacedTile struct. The board is represented as a tile set containing tiles used in the game, for verification whether the tile a player wants to place is legal,  moreover it contains slice of placed tiles in the same order as a tile set. Additionally, board includes a city manager used for merging cities, scoring and checking for legal meeples placement in the cities.
+The tiles described do not contain information about their position or meeple placement. This information is located in the PlacedTile struct. The board is represented as a tile set containing tiles used in the game, for verification whether the tile a player wants to place is legal. Moreover, it contains a slice of placed tiles in the same order as the tile set. Additionally, the board includes a city manager used for merging cities, scoring and checking for legal meeple placements in the cities.
 
-A single game is represented by a board, shuffled deck of tiles, and players partaking in it. Each player knows their score, and the number of meeples of each type available to them.
+A single game is represented by a board, a shuffled deck of tiles, and players partaking in it. Each player knows their score and the number of meeples of each type available to them.
 
-Our solution has been designed to be modifiable by adding extensions to the game. Generalizations, such as meeple type or feature type, allow for the easy implementation of new potential features e.g., rivers.
+Our solution has been designed to be modifiable by adding extensions to the game. Generalizations, such as meeple type or feature type, allow for the easy implementation of new potential features, e.g. rivers.
 
 \subsection{Execution flow}
 % Opisanie wykonywanych akcji podejmowanych przez silnik gry: wylosowanie kafelka ze stosu, wyliczenie legalnych ułożeń kafelka, wybór położenia i wyliczanie punktacji za jego położenie.
@@ -66,10 +66,9 @@ The game engine is capable of handling multiple game instances, by using Go pipe
     \item GetRemainingTiles - returns all available tiles that have not yet been placed. With this data, the agent can expand the game tree for each possible move that might occur. The returned tiles come with information about their probability.
     \item GetLegalMoves - returns all legal moves for a given tile. It considers where the tile can be placed and where are the possible meeple placements on it.
     \item GetMidGameScore - returns the information about the score for all players, calculated as if the game has just finished.
-    \item PlayTurn - allows the agent to play a turn using a given tile, and modifies the game state. It returns the new state of the game 
+    \item PlayTurn - allows the agent to play a turn using a given tile, and modifies the game state. It returns the new state of the game.
 \end{itemize}
 
-% coś o tym że  agent może budować drzewo jak w algorytmie alphago, ale troche nie wiem jak ten akapit rozwinąć.
-With these requests, the agent is capable of building its own game tree, as in the AlphaGo algorithm \cite{AlphaGoAlgorithm}.
+With these requests, the agent is capable of building its game tree and performing the selected actions.
 
-To provide the neural network with the game state, a serialization process is required. Serialized game contains all players' statistics (meeple counts, score) and all tiles on the board. The placed tiles on the board are represented in the binary format to ensure a fixed memory size of 8 bytes. The slice of binary tiles consists of all tiles in the same order as tiles in tile set. The tiles in this array that are not yet placed are set to zero.
+To provide the neural network with the game state, a serialization process is required. The serialized game contains all players' statistics (meeple counts, score) and all tiles on the board. The placed tiles on the board are represented in the binary format to ensure a fixed memory size of 8 bytes. The slice of binary tiles consists of all tiles in the same order as tiles in tile set. The tiles in this array that are not yet placed are set to zero.
