@@ -57,7 +57,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur digniss
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur dignissim urna, a rhoncus dolor venenatis adipiscing. Phasellus viverra aliquam fringilla. Praesent mattis diam id ipsum placerat a laoreet diam tempus. Quisque eu leo ut sapien ultricies gravida ac sed turpis. Donec nibh enim, pretium a sagittis et, varius non nulla. Vivamus enim augue, condimentum eget convallis hendrerit, mattis ut lectus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin semper libero augue. Praesent auctor ligula sit amet quam molestie adipiscing. Mauris vehicula congue mollis. Duis tincidunt interdum purus quis congue. Integer vel orci mauris. Curabitur rutrum tincidunt mi ut elementum. Nunc non massa nunc. Donec ultricies ipsum ac risus sollicitudin porta. Phasellus elementum odio et leo consectetur consectetur. 
 
-\subsection{Communication within a system}
+\subsection{Communication within a system} \label{communication}
 % Opisanie komunikacji pomiędzy silnikiem gry, a sieciami neuronowymi uczonymi na karcie graficznej. Aktualizacja stanu gry w zależności od akcji podejmowanych przez agenta.
 
 The game engine is capable of handling multiple game instances, by using Go pipelines and goroutines \cite{GolangPipeline}, which allows for many agents to play and learn simultaneously. The engine provides several request types necessary for the agents, to retrieve information about the game. There are five such requests:
@@ -74,37 +74,60 @@ With these requests, the agent is capable of building its own game tree, as in t
 
 To provide the neural network with the game state, a serialization process is required. Serialized game contains all players' statistics (meeple counts, score) and all tiles on the board. The placed tiles on the board are represented in the binary format to ensure a fixed memory size of 8 bytes. The slice of binary tiles consists of all tiles in the same order as tiles in tile set. The tiles in this array that are not yet placed are set to zero.
 
-\subsection{Engine speed up}
+\subsection{Performance}
 
-In the project we had two types of benchmark tests to measure the system efficiency. The first one are feature tests, the second one are engine request tests.
+Once the engine implementation reached a certain stage,
+the team created a benchmark suite measuring the performance of the engine’s operations.
+This allowed us to assess if the overall performance was acceptable and ensured that
+no performance regressions were introduced at a later stage of the implementation.
+
+The benchmark suite consists of two types of benchmark tests.
+The first one is feature tests and the second one is engine request tests.
+
 
 \subsubsection{Feature tests}
-Feature test were measuring the time of playing turns using tiles containg only one type of feature. These tests were supposed to test if placing the tile or scoring it took too long. Placing and scoring features were tested in two ways:
+
+The aim of the feature tests is measuring the time that processing of
+a specific feature type contributes to the overall time of turn processing.
+During the measurement, a test for a specific feature places tiles consisting of
+only that specific feature. For each feature, two testing strategies were used:
 \begin{itemize}
-	\item A game was played where each tile was placed on the right to the previous one, resulting in a long row of tiles containing that feature.
-	\item Many small games, each resulting in a short row of tiles containing that feature.
-\end{itemize} 
+	\item a test with a single game where each tile is placed on the right of the previous one,
+          resulting in a long row of tiles consisting of that feature,
+    \item a test with many shorter (in terms of the tile count) games,
+          each ending with a short row of tiles consisting of that feature.
+\end{itemize}
 
 \subsubsection{Engine request tests}
-Each request was tested by simulating 100 semirandom games. In each turn for each game instance the tested request was called, and the total execution time of request was measured. If the tested request mutates the game, it would be called on a temporal copy.
 
-\subsubsection{Speed up solutions}
-We found a few solutions which  accelerated the system:
+The aim of the engine request tests is to measure the time of both the game processing
+and the abstraction on top of it that the agents use. The time measured here reflects
+how long the agent has to wait on requests to get responses. The individual tests measure
+specific requests from the ones documented in the earlier section (\ref{communication}).
+
+Each request is tested by simulating 100 semi-random games. In each turn, for each game instance,
+the tested request is called and the total execution of the request is measured.
+If the tested request mutates the game, it is evaluated on a temporary copy.
+
+\subsubsection{Improving performance}
+
+After evaluating the performance numbers as well as testing the whole system with
+an agent implementation, we've observed that the efficiency of the engine does not
+realistically allow us to train an agent with a full standard tile set (72 tiles).
+The expansion of a tree by just one level was already proving to be problematic.
+To mitigate this, we worked on improving the engine's performance.
+
+We found and implemented a few ideas for enhancing the efficiency of the system:
 \begin{itemize}
-	\item not holding the shields positions in the city, but only a shield count in the city
-	\item deacreasing the size of enum types such as feature type and shield flag to single byte.
-\item deacreasing the size if position to single byte int.
-	\item allowing engine to run games on multiple threads
-	\item allowing to compare tile and placed tile, without the need to convert one to another
-\end{itemize} 
-
-Those solutions resulted in a speed up of the system.
-
-Other solutions we propose:
-\begin{itemize}
-	\item Convert all tiles to binary tile of a constant size.
-	\item Allow engine to be called on multiple threads (threadsafe)
-\end{itemize} 
-
-
-
+	\item allowing to compare tile and placed tile types without needing to convert one to another,
+    \item updating the null logger implementation to be a full no-op,
+    \item allowing the engine to receive requests from the agent on multiple threads,
+    \item changing the tile representation to simple integers of a constant size (i.e. no slices)
+          that can be operated on with bitwise operations,
+    \item holding just the shield count rather than the exact positions of shields in cities,
+    \item decreasing the size of enum types such as feature type and shield flag to a single byte,
+    \item decreasing the size of the position to a single-byte integer.
+\end{itemize}
+Some of the above solutions resulted in promising improvements,
+while others offered smaller speedups or, in some cases, had the opposite effect.
+Overall, the performance gains were not enough to allow for use in agent training.
