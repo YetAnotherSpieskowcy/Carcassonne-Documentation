@@ -1,0 +1,41 @@
+@startuml
+hide empty description
+
+[*] --> Preparation
+
+state "Active player change" as ChangeActivePlayer
+Preparation -> ChangeActivePlayer
+
+state "1A. Tile draw" as DrawTile
+state BeforeDrawTile <<choice>>
+ChangeActivePlayer -> BeforeDrawTile
+BeforeDrawTile -> DrawTile : Stack not empty
+BeforeDrawTile -l-> ScoreFinalFeatures : Stack empty
+
+state "Tile is discarded" as DiscardTile
+state BeforePlaceTile <<choice>>
+DrawTile -> BeforePlaceTile
+BeforePlaceTile -l-> DiscardTile : no valid placement
+DiscardTile --> BeforeDrawTile
+
+state "1B. Tile placement" as PlaceTile
+BeforePlaceTile --> PlaceTile : has valid placement
+
+state CanPlaceFigureDecision <<choice>>
+state PlayerPlaceFigureDecision <<choice>>
+PlaceTile -> CanPlaceFigureDecision
+
+CanPlaceFigureDecision -> ScoreFeatures : figure count == 0
+CanPlaceFigureDecision -> PlayerPlaceFigureDecision : figure count != 0
+PlayerPlaceFigureDecision -> ScoreFeatures : no figure
+PlayerPlaceFigureDecision --> PlaceFigure : has figure
+
+state "2. Figure placement" as PlaceFigure
+PlaceFigure --> ScoreFeatures
+
+state "3. Feature scoring" as ScoreFeatures
+ScoreFeatures --> ChangeActivePlayer
+
+state "Final scoring" as ScoreFinalFeatures
+ScoreFinalFeatures -l-> [*]
+@enduml

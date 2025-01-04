@@ -1,11 +1,58 @@
 \section{Game engine architecture}
-New sections should not start with directly a subsection, rather with short section introduction. 
+The game engine forms an environment for the agent by keeping track of the game state
+(including scores), providing the available actions (moves), and generating possible
+future states and their probabilities in the game tree based on the current knowledge.
+The number of possible states in Carcassonne quickly rises as more tiles are placed on
+the board leading to its high branching factor ($b = 55$ on average \cite{MasterThesisCarcassonne}).
+To maximize the number of states that can be included in the search tree,
+the team opted to implement the game engine from scratch using a fast compilable
+language to later bridge it with an agent implemented in a language
+that is better suited for developing AI applications.
+
+Originally, the engine was supposed to be extended to support some game expansions
+but eventually, this work had to be dropped due to slower-than-anticipated progress on
+the core aspects of the project.
+
+This section will focus on the architecture of this engine and how the communication within the whole system works.
 
 \subsection{Overview of architecture}
 % Opisanie architektury silnika, sposobu komunikacji między komponentami, a także za co one odpowiadają.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur dignissim urna, a rhoncus dolor venenatis adipiscing. Phasellus viverra aliquam fringilla. Praesent mattis diam id ipsum placerat a laoreet diam tempus. Quisque eu leo ut sapien ultricies gravida ac sed turpis. Donec nibh enim, pretium a sagittis et, varius non nulla. Vivamus enim augue, condimentum eget convallis hendrerit, mattis ut lectus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin semper libero augue. Praesent auctor ligula sit amet quam molestie adipiscing. Mauris vehicula congue mollis. Duis tincidunt interdum purus quis congue. Integer vel orci mauris. Curabitur rutrum tincidunt mi ut elementum. Nunc non massa nunc. Donec ultricies ipsum ac risus sollicitudin porta. Phasellus elementum odio et leo consectetur consectetur. 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur dignissim urna, a rhoncus dolor venenatis adipiscing. Phasellus viverra aliquam fringilla. Praesent mattis diam id ipsum placerat a laoreet diam tempus. Quisque eu leo ut sapien ultricies gravida ac sed turpis. Donec nibh enim, pretium a sagittis et, varius non nulla. Vivamus enim augue, condimentum eget convallis hendrerit, mattis ut lectus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin semper libero augue. Praesent auctor ligula sit amet quam molestie adipiscing. Mauris vehicula congue mollis. Duis tincidunt interdum purus quis congue. Integer vel orci mauris. Curabitur rutrum tincidunt mi ut elementum. Nunc non massa nunc. Donec ultricies ipsum ac risus sollicitudin porta. Phasellus elementum odio et leo consectetur consectetur. 
+In this section, the project of game architecture will be discussed.
+Figure \ref{fig:SystemArchitecture} shows a diagram of the whole system as implemented by the team.
+Computations related to processing games are performed on a CPU,
+while agents should be trained on a GPU.
+
+\begin{figure*}
+	\centering
+	\scalebox{.48}{\input{figures/arch.tex}}
+	\caption{Diagram of the system's architecture}
+	\label{fig:SystemArchitecture}
+\end{figure*}
+
+The GameEngine is responsible for evaluating requests it receives from the agents
+ensuring that Carcassonne's rule set is followed. It maintains currently active games,
+exposes the current state to the agents, generates possible moves for the given input,
+and allows simulation of what game state a sequence of actions will lead to (before performing it
+on an active game). Internally, GameEngine distributes the requests it receives among
+multiple workers (lightweight threads) that can evaluate them simultaneously. Actions that
+require state transitions are performed on a state's clone, while read-only operations
+get performed on the original copy which is meant to enable efficient concurrency.
+
+For each active game, GameEngine logs all of its states to that game's log file,
+allowing for later consumption by Visualiser. Visualiser parses the logs
+and presents the game in a graphical form, allowing for analysis by humans.
+
+TrainingSupervisor is responsible for managing communication and supervising agents' training.
+It should optimise communication by reducing data transfer between CPU and GPU.
+
+The GameEngine (and Visualiser) is implemented in Go, while the agent and TrainingSupervisor
+are implemented in Python. The use of Go for the engine was meant to allow for better performance of
+the rule engine but it means that the TrainingSupervisor cannot communicate with it directly.
+To solve this, the team used the gopy project \cite{gopy} to automatically generate
+Python bindings \cite{LanguageBindings} for the Go package. This leads to a larger overhead than
+using manually-written CPython extension would but this has been considered acceptable as most of
+the CPU-bound work happens in the GameEngine itself, not at the communication layer.
 
 \subsection{Components of a solution}
 % Opisanie elementów z jakich się składa rozgrywka m.in.: kafelki i ich elementy, gracze, a także uwzględnione rozszerzenia gry Carcassonne.
@@ -51,11 +98,57 @@ A single game is represented by a board, a shuffled deck of tiles, and players p
 
 Our solution has been designed to be modifiable by adding extensions to the game. Generalizations, such as meeple type or feature type, allow for the easy implementation of new potential features, e.g. rivers.
 
-\subsection{Execution flow}
+\subsection{Game flow}
 % Opisanie wykonywanych akcji podejmowanych przez silnik gry: wylosowanie kafelka ze stosu, wyliczenie legalnych ułożeń kafelka, wybór położenia i wyliczanie punktacji za jego położenie.
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur dignissim urna, a rhoncus dolor venenatis adipiscing. Phasellus viverra aliquam fringilla. Praesent mattis diam id ipsum placerat a laoreet diam tempus. Quisque eu leo ut sapien ultricies gravida ac sed turpis. Donec nibh enim, pretium a sagittis et, varius non nulla. Vivamus enim augue, condimentum eget convallis hendrerit, mattis ut lectus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin semper libero augue. Praesent auctor ligula sit amet quam molestie adipiscing. Mauris vehicula congue mollis. Duis tincidunt interdum purus quis congue. Integer vel orci mauris. Curabitur rutrum tincidunt mi ut elementum. Nunc non massa nunc. Donec ultricies ipsum ac risus sollicitudin porta. Phasellus elementum odio et leo consectetur consectetur. 
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consectetur dignissim urna, a rhoncus dolor venenatis adipiscing. Phasellus viverra aliquam fringilla. Praesent mattis diam id ipsum placerat a laoreet diam tempus. Quisque eu leo ut sapien ultricies gravida ac sed turpis. Donec nibh enim, pretium a sagittis et, varius non nulla. Vivamus enim augue, condimentum eget convallis hendrerit, mattis ut lectus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Proin semper libero augue. Praesent auctor ligula sit amet quam molestie adipiscing. Mauris vehicula congue mollis. Duis tincidunt interdum purus quis congue. Integer vel orci mauris. Curabitur rutrum tincidunt mi ut elementum. Nunc non massa nunc. Donec ultricies ipsum ac risus sollicitudin porta. Phasellus elementum odio et leo consectetur consectetur. 
+This section will present the whole flow of the game and the way it was implemented in the engine.
+Figure \ref{fig:GameFlow} shows a state diagram of the game.
+
+\begin{figure*}
+	\centering
+	\scalebox{.42}{\input{figures/state-diagram.tex}}
+	\caption{Carcassonne's state diagram}
+	\label{fig:GameFlow}
+\end{figure*}
+
+Before the game can start, a few actions need to be performed as part of the \textbf{Preparation} stage:
+\begin{itemize}
+	\item putting a start tile on the board,
+	\item generating a stack of all (remaining) tiles in random order,
+	\item setting the figure count for each player to $7$,
+	\item resetting the scores of all players to $0$,
+	\item choosing the player order.
+\end{itemize}
+In the implementation, these steps are executed when a new game object (along with its board
+and players) is created. The player order is fixed and the stack is internal to the engine
+to avoid leaking its order to the agents.
+
+Once the game starts, the players take turns with the drawn tiles. The engine takes tiles from
+the top of game's stack of remaining tiles (\textbf{Tile draw}) until it finds one that can be
+placed somewhere on the board which it then includes as part of the state passed to the agent.
+When no tiles are left on the stack, the engine proceeds to the \textbf{Final scoring} stage
+(described later).
+
+Once the agent knows the tile it needs to place, it needs to choose \textbf{Tile placement} and,
+if it has any figures, \textbf{Figure placement}. In the implementation, this is performed
+as a single action - the agent has to choose both the position/rotation of the tile and the feature
+to put a meeple on (if any) which it then sends as input to play the turn.
+The engine allows the agent to ask for valid tile placements as well as valid features to
+place meeple on for the given tile, taking into account whether that feature (which can spread
+over several tiles) does not already have a meeple placed. When a meeple is placed,
+the player's meeple count is decremented by $1$.
+
+After the tile is placed (following the validation of the move by the engine),
+we need to proceed with \textbf{Feature scoring}. During this stage, all features that have been
+completed after the tile was placed have to be identified, the control over them needs to be resolved,
+and then points need to be awarded to the controlling players and their meeple counts updated.
+The implementation performs this when handling the request of placing a tile (with meeple) on the board.
+
+After \textbf{Feature scoring}, the next player takes a turn and the game continues
+until the stack of remaining tiles is empty. To get the final results,
+\textbf{Final scoring} is performed after emptying the stack. This consists of scoring
+all uncompleted features and all features known as end-of-game features
+(in the base game, just fields).
 
 \subsection{Communication within a system}
 % Opisanie komunikacji pomiędzy silnikiem gry, a sieciami neuronowymi uczonymi na karcie graficznej. Aktualizacja stanu gry w zależności od akcji podejmowanych przez agenta.
