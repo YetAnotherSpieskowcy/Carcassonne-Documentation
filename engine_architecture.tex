@@ -150,7 +150,7 @@ until the stack of remaining tiles is empty. To get the final results,
 all uncompleted features and all features known as end-of-game features
 (in the base game, just fields).
 
-\subsection{Communication within a system}
+\subsection{Communication within a system} \label{communication}
 % Opisanie komunikacji pomiędzy silnikiem gry, a sieciami neuronowymi uczonymi na karcie graficznej. Aktualizacja stanu gry w zależności od akcji podejmowanych przez agenta.
 
 The game engine is capable of handling multiple game instances, by using Go pipelines and goroutines \cite{GolangPipeline}, which allows for many agents to play and learn simultaneously. The engine provides several request types necessary for the agents, to retrieve information about the game. There are five such requests:
@@ -165,3 +165,61 @@ The game engine is capable of handling multiple game instances, by using Go pipe
 With these requests, the agent is capable of building its game tree and performing the selected actions.
 
 To provide the neural network with the game state, a serialization process is required. The serialized game contains all players' statistics (meeple counts, score) and all tiles on the board. The placed tiles on the board are represented in the binary format to ensure a fixed memory size of 8 bytes. The slice of binary tiles consists of all tiles in the same order as tiles in tile set. The tiles in this array that are not yet placed are set to zero.
+
+\subsection{Performance}
+
+Once the engine implementation reached a certain stage,
+the team created a benchmark suite measuring the performance of the engine’s operations.
+This allowed us to assess if the overall performance was acceptable and ensured that
+no performance regressions were introduced at a later stage of the implementation.
+
+The benchmark suite consists of two types of benchmark tests.
+The first one is feature tests and the second one is engine request tests.
+
+
+\subsubsection{Feature tests}
+
+The aim of the feature tests is measuring the time that processing of
+a specific feature type contributes to the overall time of turn processing.
+During the measurement, a test for a specific feature places tiles consisting of
+only that specific feature. For each feature, two testing strategies were used:
+\begin{itemize}
+	\item a test with a single game where each tile is placed on the right of the previous one,
+          resulting in a long row of tiles consisting of that feature,
+    \item a test with many shorter (in terms of the tile count) games,
+          each ending with a short row of tiles consisting of that feature.
+\end{itemize}
+
+\subsubsection{Engine request tests}
+
+The aim of the engine request tests is to measure the time of both the game processing
+and the abstraction on top of it that the agents use. The time measured here reflects
+how long the agent has to wait on requests to get responses. The individual tests measure
+specific requests from the ones documented in the earlier section (\ref{communication}).
+
+Each request is tested by simulating 100 semi-random games. In each turn, for each game instance,
+the tested request is called and the total execution of the request is measured.
+If the tested request mutates the game, it is evaluated on a temporary copy.
+
+\subsubsection{Improving performance}
+
+After evaluating the performance as well as testing the whole system with
+an agent implementation, we've observed that the efficiency of the engine does not
+realistically allow us to train an agent with a full standard tile set (72 tiles).
+The expansion of a tree by just one level was already proving to be problematic.
+To mitigate this, we worked on improving the engine's performance.
+
+We found and implemented a few ideas for enhancing the efficiency of the system:
+\begin{itemize}
+	\item allowing to compare tile and placed tile types without needing to convert one to another,
+    \item updating the null logger implementation to be a full no-op,
+    \item allowing the engine to receive requests from the agent on multiple threads,
+    \item changing the tile representation to simple integers of a constant size (i.e. no slices)
+          that can be operated on with bitwise operations,
+    \item holding just the shield count rather than the exact positions of shields in cities,
+    \item decreasing the size of enum types such as feature type and shield flag to a single byte,
+    \item decreasing the size of X and Y position coordinates to single-byte integers.
+\end{itemize}
+Some of the above solutions resulted in promising improvements,
+while others offered smaller speedups or, in some cases, had the opposite effect.
+Overall, the performance gains were not enough to allow for use in agent training.
