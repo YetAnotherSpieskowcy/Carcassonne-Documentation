@@ -12,9 +12,10 @@ the underlying game engine. Tree is populated iteratively until one of the
 postconditions is reached (either time elapsed or maximum number of iterations). 
 During the expansion phase in the MCTS algorithm, the Upper Confidence Bound (UCB) 
 is used to select the most promising child nodes. This formula is used to obtain 
-the balance between exploration of less-visited nodes and the ones that proved to yield highest rewards.
+the balance between exploration of less-visited nodes and the ones that proved to
+yield the highest rewards.
 
-The core of the decision making is a combination of two evaluation metrics. 
+The core of the decision-making is a combination of two evaluation metrics. 
 One is calculated during selection (policy) and the other during expansion (value). 
 As an input they take a serialized game state represented as a binary mask and both 
 return respective evaluation scores reduced by discount factor, which is used to 
@@ -28,8 +29,8 @@ the agent to be submitted as an actual move to the engine.
 
 This whole structure was inspired by the implementation of AlphaGo Zero, 
 and it allows for an efficient and universal training process, since 
-it is well suited for solving complex decision-making tasks in games like Carccassone. 
+it is well suited for solving complex decision-making tasks in games like Carcassonne. 
 Based on this architecture, the team prepared agents using different 
-tactics (e.g. greedy method and random selection) which later will be used to 
+tactics (e.g.\ greedy method and random selection) which later will be used to 
 measure performance of a neural network agent and provide a baseline for comparison.
 
