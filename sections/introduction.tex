@@ -10,9 +10,18 @@ only to master this game but also to devise innovative moves unknown to humans b
 
 Since then, we have noticed rapid development in this area. A crucial milestone was
 the creation of AlphaGo Zero which, in contrast to its predecessors, used only reinforcement
-learning during training and yet managed to outperform all the older versions in only forty
-days \cite{AlphaGoZeroBlog}. That opened up opportunities for AI to master other games like chess 
-or shogi.
+learning during training and yet managed to outperform all of the older versions in only forty
+days \cite{AlphaGoZeroBlog}. Moreover, while the original AlphaGo algorithm used a complex setup
+of four different neural networks for its decision making, and required historical human games
+for the training process, the AlphaGo Zero algorithm used only a single residual neural network,
+and learned solely by self-play. Furthermore, the input size of AlphaGo Zero was also significantly
+reduced by eliminating all hand-crafted features and leaving only the essential elements,
+thus eliminating the need for any external knowledge during the learning process.
+
+The next major milestone was the creation of AlphaZero. While this algorithm was largely similar
+to its predecessor, it included modifications that allowed the generalisation to other games besides Go,
+such as allowing for non-binary game outcomes and discontinuing the use of board rotations as a form of
+data augmentation. That opened up opportunities for AI to master other games like Chess or Shogi.
 
 As a result, the question arises whether it is possible to create an artificial intelligence
 agent that can repeat AlphaGo and AlphaGo Zero's success in the area of more complex
