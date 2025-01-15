@@ -1,0 +1,36 @@
+\section{Agent Architecture}
+
+The agent was implemented using Python due to the availability of useful libraries. 
+To aid decision-making it is using a Monte Carlo Tree Search (MCTS) algorithm. 
+It consists of the base module Tree used to manage the traversal process and 
+the Node representing each state in the search tree. Together, these classes 
+provide a basis for exploration and evaluation interfaces of possible game actions.
+
+The Tree class initializes an agent with its initial game state and provides the 
+communication with the environment using the GameDispatch object, which manages 
+the underlying game engine. Tree is populated iteratively until one of the 
+postconditions is reached (either time elapsed or maximum number of iterations). 
+During the expansion phase in the MCTS algorithm, the Upper Confidence Bound (UCB) 
+is used to select the most promising child nodes. This formula is used to obtain 
+the balance between exploration of less-visited nodes and the ones that proved to
+yield the highest rewards.
+
+The core of the decision-making is a combination of two evaluation metrics. 
+One is calculated during selection (policy) and the other during expansion (value). 
+As an input they take a serialized game state represented as a binary mask and both 
+return respective evaluation scores reduced by discount factor, which is used to 
+prioritize actions that provide the best short-term rewards during this process.
+
+Finally, after exploration and expansion is completed the best action is determined 
+by evaluation of the child nodes of the root. It is selected by calculating the 
+average cumulative reward (Q value) of their corresponding subtrees. 
+The result of the successful search is the most promising action chosen by 
+the agent to be submitted as an actual move to the engine. 
+
+This whole structure was inspired by the implementation of AlphaGo Zero, 
+and it allows for an efficient and universal training process, since 
+it is well suited for solving complex decision-making tasks in games like Carcassonne. 
+Based on this architecture, the team prepared agents using different 
+tactics (e.g.\ greedy method and random selection) which later will be used to 
+measure performance of a neural network agent and provide a baseline for comparison.
+

@@ -19,14 +19,14 @@ This section will focus on the architecture of this engine and how the communica
 % Opisanie architektury silnika, sposobu komunikacji między komponentami, a także za co one odpowiadają.
 
 In this section, the project of game architecture will be discussed.
-Figure \ref{fig:SystemArchitecture} shows a diagram of the whole system as implemented by the team.
+Figure \ref{fig:SystemArchitecture} shows a diagram of the entire system as implemented by the team.
 Computations related to processing games are performed on a CPU,
 while agents should be trained on a GPU.
 
 \begin{figure*}
 	\centering
 	\scalebox{.48}{\input{figures/arch.tex}}
-	\caption{Diagram of the system's architecture}
+	\caption{Diagram of the system's architecture.}
 	\label{fig:SystemArchitecture}
 \end{figure*}
 
@@ -48,16 +48,16 @@ It should optimise communication by reducing data transfer between CPU and GPU.
 
 The GameEngine (and Visualiser) is implemented in Go, while the agent and TrainingSupervisor
 are implemented in Python. The use of Go for the engine was meant to allow for better performance of
-the rule engine but it means that the TrainingSupervisor cannot communicate with it directly.
+the rule engine, but it means that the TrainingSupervisor cannot communicate with it directly.
 To solve this, the team used the gopy project \cite{gopy} to automatically generate
 Python bindings \cite{LanguageBindings} for the Go package. This leads to a larger overhead than
-using manually-written CPython extension would but this has been considered acceptable as most of
+using manually-written CPython extension would, but this has been considered acceptable as most of
 the CPU-bound work happens in the GameEngine itself, not at the communication layer.
 
 \subsection{Components of a solution}
 % Opisanie elementów z jakich się składa rozgrywka m.in.: kafelki i ich elementy, gracze, a także uwzględnione rozszerzenia gry Carcassonne.
 
-The game Carcassone is played by placing tiles \cite{CarcassoneRules}. Each tile is represented by a set of features on it. All features are defined by their type, such as road, city, field or monastery, a modifier that modifies the calculation process, and the sides which indicate on which edges the feature is present. In this project, there is only one modifier used - the shield. The engine was designed to accommodate game extensions.
+The game Carcassonne is played by placing tiles \cite{CarcassoneRules}. Each tile is represented by a set of features on it. All features are defined by their type, such as road, city, field or monastery, a modifier that modifies the calculation process, and the sides which indicate on which edges the feature is present. In this project, there is only one modifier used - the shield. The engine was designed to accommodate game extensions.
 
 A feature's side is a byte-sized value, in which each bit defines whether the feature is present on a specific half of the tile's edge as shown on Figure \ref{fig:SIDES}. Features such as roads, are represented by a whole edge formed by combining two sides e.g., the TopLeft and TopRight sides.
 \begin{figure}
@@ -89,14 +89,15 @@ A feature's side is a byte-sized value, in which each bit defines whether the fe
         \node [rotate=270] at (-2.8, 1.5) {LeftTop};
         \node [rotate=270] at (-2.8, -1.5) {LeftBottom};
     \end{tikzpicture}
-    \caption{Side representation} \label{fig:SIDES}
+    \caption{Side representation.}
+    \label{fig:SIDES}
 \end{figure}
 
 The tiles described do not contain information about their position or meeple placement. This information is located in the PlacedTile struct. The board is represented as a tile set containing tiles used in the game, for verification whether the tile a player wants to place is legal. Moreover, it contains a slice of placed tiles in the same order as the tile set. Additionally, the board includes a city manager used for merging cities, scoring and checking for legal meeple placements in the cities.
 
 A single game is represented by a board, a shuffled deck of tiles, and players partaking in it. Each player knows their score and the number of meeples of each type available to them.
 
-Our solution has been designed to be modifiable by adding extensions to the game. Generalizations, such as meeple type or feature type, allow for the easy implementation of new potential features, e.g. rivers.
+Our solution has been designed to be modifiable by adding extensions to the game. Generalizations, such as meeple type or feature type, allow for the easy implementation of new potential features, e.g.\ rivers.
 
 \subsection{Game flow}
 % Opisanie wykonywanych akcji podejmowanych przez silnik gry: wylosowanie kafelka ze stosu, wyliczenie legalnych ułożeń kafelka, wybór położenia i wyliczanie punktacji za jego położenie.
@@ -107,13 +108,13 @@ Figure \ref{fig:GameFlow} shows a state diagram of the game.
 \begin{figure*}
 	\centering
 	\scalebox{.42}{\input{figures/state-diagram.tex}}
-	\caption{Carcassonne's state diagram}
+	\caption{Carcassonne's state diagram.}
 	\label{fig:GameFlow}
 \end{figure*}
 
 Before the game can start, a few actions need to be performed as part of the \textbf{Preparation} stage:
 \begin{itemize}
-	\item putting a start tile on the board,
+	\item Putting a start tile on the board,
 	\item generating a stack of all (remaining) tiles in random order,
 	\item setting the figure count for each player to $7$,
 	\item resetting the scores of all players to $0$,
@@ -129,9 +130,9 @@ placed somewhere on the board which it then includes as part of the state passed
 When no tiles are left on the stack, the engine proceeds to the \textbf{Final scoring} stage
 (described later).
 
-Once the agent knows the tile it needs to place, it needs to choose \textbf{Tile placement} and,
+Once the agent knows the tile it needs to place, it needs to select \textbf{Tile placement} and,
 if it has any figures, \textbf{Figure placement}. In the implementation, this is performed
-as a single action - the agent has to choose both the position/rotation of the tile and the feature
+as a single action - the agent has to pick both the position/rotation of the tile and the feature
 to put a meeple on (if any) which it then sends as input to play the turn.
 The engine allows the agent to ask for valid tile placements as well as valid features to
 place meeple on for the given tile, taking into account whether that feature (which can spread
@@ -150,7 +151,7 @@ until the stack of remaining tiles is empty. To get the final results,
 all uncompleted features and all features known as end-of-game features
 (in the base game, just fields).
 
-\subsection{Communication within a system}
+\subsection{Communication within a system} \label{communication}
 % Opisanie komunikacji pomiędzy silnikiem gry, a sieciami neuronowymi uczonymi na karcie graficznej. Aktualizacja stanu gry w zależności od akcji podejmowanych przez agenta.
 
 The game engine is capable of handling multiple game instances, by using Go pipelines and goroutines \cite{GolangPipeline}, which allows for many agents to play and learn simultaneously. The engine provides several request types necessary for the agents, to retrieve information about the game. There are five such requests:
@@ -165,3 +166,61 @@ The game engine is capable of handling multiple game instances, by using Go pipe
 With these requests, the agent is capable of building its game tree and performing the selected actions.
 
 To provide the neural network with the game state, a serialization process is required. The serialized game contains all players' statistics (meeple counts, score) and all tiles on the board. The placed tiles on the board are represented in the binary format to ensure a fixed memory size of 8 bytes. The slice of binary tiles consists of all tiles in the same order as tiles in tile set. The tiles in this array that are not yet placed are set to zero.
+
+\subsection{Performance}
+
+Once the engine implementation reached a certain stage,
+the team created a benchmark suite measuring the performance of the engine’s operations.
+This allowed us to assess if the overall performance was acceptable and ensured that
+no performance regressions were introduced at a later stage of the implementation.
+
+The benchmark suite consists of two types of benchmark tests.
+The first one is feature tests and the second one is engine request tests.
+
+
+\subsubsection{Feature tests}
+
+The aim of the feature tests is measuring the time that processing of
+a specific feature type contributes to the overall time of turn processing.
+During the measurement, a test for a specific feature places tiles consisting of
+only that specific feature. For each feature, two testing strategies were used:
+\begin{itemize}
+	\item A test with a single game where each tile is placed on the right of the previous one,
+          resulting in a long row of tiles consisting of that feature,
+    \item a test with many shorter (in terms of the tile count) games,
+          each ending with a short row of tiles consisting of that feature.
+\end{itemize}
+
+\subsubsection{Engine request tests}
+
+The aim of the engine request tests is to measure the time of both the game processing
+and the abstraction on top of it that the agents use. The time measured here reflects
+how long the agent has to wait on requests to get responses. The individual tests measure
+specific requests from the ones documented in the earlier section (\ref{communication}).
+
+Each request is tested by simulating 100 semi-random games. In each turn, for each game instance,
+the tested request is called and the total execution of the request is measured.
+If the tested request mutates the game, it is evaluated on a temporary copy.
+
+\subsubsection{Improving performance}
+
+After evaluating the performance as well as testing the whole system with
+an agent implementation, we've observed that the efficiency of the engine does not
+realistically allow us to train an agent with a full standard tile set (72 tiles).
+The expansion of a tree by just one level was already proving to be problematic.
+To mitigate this, we worked on improving the engine's performance.
+
+We found and implemented a few ideas for enhancing the efficiency of the system:
+\begin{itemize}
+	\item Allowing to compare tile and placed tile types without needing to convert one to another,
+    \item updating the null logger implementation to be a full no-op,
+    \item allowing the engine to receive requests from the agent on multiple threads,
+    \item changing the tile representation to simple integers of a constant size (i.e.\ no slices)
+          that can be operated on with bitwise operations,
+    \item holding just the shield count rather than the exact positions of shields in cities,
+    \item decreasing the size of enum types such as feature type and shield flag to a single byte,
+    \item decreasing the size of X and Y position coordinates to single-byte integers.
+\end{itemize}
+Some of the above solutions resulted in promising improvements,
+while others offered smaller speed-ups or, in some cases, had the opposite effect.
+Overall, the performance gains were not enough to allow for use in agent training.
