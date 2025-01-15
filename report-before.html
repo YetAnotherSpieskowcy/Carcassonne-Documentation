@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>TeXtidote analysis</title>
+<style type="text/css">
+body {
+  font-family: sans-serif;
+}
+.highlight, .highlight-sh, .highlight-spelling {
+  padding: 2pt;
+  border-radius: 4pt;
+  cursor: help;
+  opacity: 0.7;
+  border: dashed 1px;
+}
+.highlight {
+  background-color: orange;
+  color: black;
+}
+.highlight-sh {
+  background-color: yellow;
+  color: black;
+}
+.highlight-spelling {
+  background-color: red;
+  color: white;
+}
+div.original-file {
+  font-family: monospace;
+  font-size: 11pt;
+  background-color: #f8f8ff;
+  padding: 20pt;
+  border-radius: 6pt;
+}
+.textidote {
+  	background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyAgIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIiAgIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyIgICB4bWxuczpzdmc9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgICB4bWxuczpzb2RpcG9kaT0iaHR0cDovL3NvZGlwb2RpLnNvdXJjZWZvcmdlLm5ldC9EVEQvc29kaXBvZGktMC5kdGQiICAgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiICAgd2lkdGg9IjEwMC4wOTEwNW1tIiAgIGhlaWdodD0iMTguMjA5MDk5bW0iICAgdmlld0JveD0iMCAwIDEwMC4wOTEwNSAxOC4yMDkwOTkiICAgdmVyc2lvbj0iMS4xIiAgIGlkPSJzdmc4IiAgIGlua3NjYXBlOnZlcnNpb249IjAuOTEgcjEzNzI1IiAgIHNvZGlwb2RpOmRvY25hbWU9InRleHRpZG90ZS5zdmciPiAgPGRlZnMgICAgIGlkPSJkZWZzMiIgLz4gIDxzb2RpcG9kaTpuYW1lZHZpZXcgICAgIGlkPSJiYXNlIiAgICAgcGFnZWNvbG9yPSIjZmZmZmZmIiAgICAgYm9yZGVyY29sb3I9IiM2NjY2NjYiICAgICBib3JkZXJvcGFjaXR5PSIxLjAiICAgICBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMC4wIiAgICAgaW5rc2NhcGU6cGFnZXNoYWRvdz0iMiIgICAgIGlua3NjYXBlOnpvb209IjEiICAgICBpbmtzY2FwZTpjeD0iLTI1NC4yNTMwOSIgICAgIGlua3NjYXBlOmN5PSItMjc4LjM3NTkxIiAgICAgaW5rc2NhcGU6ZG9jdW1lbnQtdW5pdHM9Im1tIiAgICAgaW5rc2NhcGU6Y3VycmVudC1sYXllcj0ibGF5ZXIxIiAgICAgc2hvd2dyaWQ9ImZhbHNlIiAgICAgZml0LW1hcmdpbi10b3A9IjAiICAgICBmaXQtbWFyZ2luLWxlZnQ9IjAiICAgICBmaXQtbWFyZ2luLXJpZ2h0PSIwIiAgICAgZml0LW1hcmdpbi1ib3R0b209IjAiICAgICBpbmtzY2FwZTp3aW5kb3ctd2lkdGg9IjE5MjAiICAgICBpbmtzY2FwZTp3aW5kb3ctaGVpZ2h0PSIxMDIxIiAgICAgaW5rc2NhcGU6d2luZG93LXg9IjAiICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMjY1IiAgICAgaW5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMSIgLz4gIDxtZXRhZGF0YSAgICAgaWQ9Im1ldGFkYXRhNSI+ICAgIDxyZGY6UkRGPiAgICAgIDxjYzpXb3JrICAgICAgICAgcmRmOmFib3V0PSIiPiAgICAgICAgPGRjOmZvcm1hdD5pbWFnZS9zdmcreG1sPC9kYzpmb3JtYXQ+ICAgICAgICA8ZGM6dHlwZSAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz4gICAgICAgIDxkYzp0aXRsZSAvPiAgICAgIDwvY2M6V29yaz4gICAgPC9yZGY6UkRGPiAgPC9tZXRhZGF0YT4gIDxnICAgICBpbmtzY2FwZTpsYWJlbD0iTGF5ZXIgMSIgICAgIGlua3NjYXBlOmdyb3VwbW9kZT0ibGF5ZXIiICAgICBpZD0ibGF5ZXIxIiAgICAgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTI5LjczODA5NSwtNzAuNTc3NzUxKSI+ICAgIDxnICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zaXplOjIwLjkyODk0NTU0cHg7bGluZS1oZWlnaHQ6MS4yNTtmb250LWZhbWlseTpzYW5zLXNlcmlmO2xldHRlci1zcGFjaW5nOjBweDt3b3JkLXNwYWNpbmc6MHB4O2ZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS45Nzc1MzgyMztzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZSIgICAgICAgaWQ9InRleHQ4MzYiPiAgICAgIDxwYXRoICAgICAgICAgZD0ibSAzMC43MjY4NjQsNzEuNTY2NTIgNS4yMzIyMzYsMCAwLDQuMjA5MDQ0IDUuODEzNTk2LDAgMCwzLjYwNDQyOSAtNS44MTM1OTYsMCAwLDQuODEzNjU4IDUuODEzNTk2LDAgMCwzLjYwNDQyOSAtMTEuMDQ1ODMyLDAgMCwtMTYuMjMxNTYgeiIgICAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LWZhbWlseTpUdXRvcjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOlR1dG9yO2ZpbGw6I2ZmZmZmZjtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS45Nzc1MzgyMztzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZSIgICAgICAgICBpZD0icGF0aDMzODYiIC8+ICAgICAgPHBhdGggICAgICAgICBkPSJtIDQyLjMzNTg4OCw3NS43NzU1NjQgMTEuMDQ1ODMyLDAgMCw3LjgxMzQ3MyAtNS44MTM1OTYsMCAwLDAuNjA0NjE0IDUuODEzNTk2LDAgMCwzLjYwNDQyOSAtMTEuMDQ1ODMyLDAgMCwtMTIuMDIyNTE2IHogbSA1LjIzMjIzNiw0LjIwOTA0MyAwLjU4MTM2LDAgMCwtMC42MDQ2MTQgLTAuNTgxMzYsMCAwLDAuNjA0NjE0IHoiICAgICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1mYW1pbHk6VHV0b3I7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjpUdXRvcjtmaWxsOiNmZmZmZmY7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuOTc3NTM4MjM7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmUiICAgICAgICAgaWQ9InBhdGgzMzg4IiAvPiAgICAgIDxwYXRoICAgICAgICAgZD0ibSA1My45NDQ5MTIsNzUuNzc1NTY0IDUuMjMyMjM2LDAgMCwzLjYwNDQyOSAtNS4yMzIyMzYsMCAwLC0zLjYwNDQyOSB6IG0gNS44MTM1OTYsMCA1LjIzMjIzNiwwIDAsMy42MDQ0MjkgLTUuMjMyMjM2LDAgMCwtMy42MDQ0MjkgeiBtIC01LjgxMzU5Niw4LjQxODA4NyA1LjIzMjIzNiwwIDAsMy42MDQ0MjkgLTUuMjMyMjM2LDAgMCwtMy42MDQ0MjkgeiBtIDUuODEzNTk2LDAgNS4yMzIyMzYsMCAwLDMuNjA0NDI5IC01LjIzMjIzNiwwIDAsLTMuNjA0NDI5IHoiICAgICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1mYW1pbHk6VHV0b3I7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjpUdXRvcjtmaWxsOiNmZmZmZmY7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuOTc3NTM4MjM7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmUiICAgICAgICAgaWQ9InBhdGgzMzkwIiAvPiAgICAgIDxwYXRoICAgICAgICAgZD0ibSA2NS41NTM5MzYsNzEuNTY2NTIgNS4yMzIyMzYsMCAwLDQuMjA5MDQ0IDUuODEzNTk2LDAgMCwzLjYwNDQyOSAtNS44MTM1OTYsMCAwLDQuODEzNjU4IDUuODEzNTk2LDAgMCwzLjYwNDQyOSAtMTEuMDQ1ODMyLDAgMCwtMTYuMjMxNTYgeiIgICAgICAgICBzdHlsZT0iZm9udC1zdHlsZTpub3JtYWw7Zm9udC12YXJpYW50Om5vcm1hbDtmb250LXdlaWdodDpub3JtYWw7Zm9udC1zdHJldGNoOm5vcm1hbDtmb250LWZhbWlseTpUdXRvcjstaW5rc2NhcGUtZm9udC1zcGVjaWZpY2F0aW9uOlR1dG9yO2ZpbGw6I2ZmZmZmZjtzdHJva2U6IzAwMDAwMDtzdHJva2Utd2lkdGg6MS45Nzc1MzgyMztzdHJva2UtbWl0ZXJsaW1pdDo0O3N0cm9rZS1kYXNoYXJyYXk6bm9uZSIgICAgICAgICBpZD0icGF0aDMzOTIiIC8+ICAgICAgPHBhdGggICAgICAgICBkPSJtIDc3LjE2Mjk2LDc1Ljc3NTU2NCA1LjIzMjIzNiwwIDAsMTIuMDIyNTE2IC01LjIzMjIzNiwwIDAsLTEyLjAyMjUxNiB6IG0gMCwtNC4yMDkwNDQgNS4yMzIyMzYsMCAwLDMuNjA0NDMgLTUuMjMyMjM2LDAgMCwtMy42MDQ0MyB6IiAgICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtZmFtaWx5OlR1dG9yOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246VHV0b3I7ZmlsbDojZmZmZmZmO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjk3NzUzODIzO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lIiAgICAgICAgIGlkPSJwYXRoMzM5NCIgLz4gICAgICA8cGF0aCAgICAgICAgIGQ9Im0gODIuOTY3NDcyLDc1Ljc3NTU2NCA1LjgxMzU5NiwwIDAsLTQuMjA5MDQ0IDUuMjMyMjM2LDAgMCwxNi4yMzE1NiAtMTEuMDQ1ODMyLDAgMCwtMTIuMDIyNTE2IHogbSA1LjIzMjIzNiw4LjQxODA4NyAwLjU4MTM2LDAgMCwtNC44MTM2NTggLTAuNTgxMzYsMCAwLDQuODEzNjU4IHoiICAgICAgICAgc3R5bGU9ImZvbnQtc3R5bGU6bm9ybWFsO2ZvbnQtdmFyaWFudDpub3JtYWw7Zm9udC13ZWlnaHQ6bm9ybWFsO2ZvbnQtc3RyZXRjaDpub3JtYWw7Zm9udC1mYW1pbHk6VHV0b3I7LWlua3NjYXBlLWZvbnQtc3BlY2lmaWNhdGlvbjpUdXRvcjtmaWxsOiNmZmZmZmY7c3Ryb2tlOiMwMDAwMDA7c3Ryb2tlLXdpZHRoOjEuOTc3NTM4MjM7c3Ryb2tlLW1pdGVybGltaXQ6NDtzdHJva2UtZGFzaGFycmF5Om5vbmUiICAgICAgICAgaWQ9InBhdGgzMzk2IiAvPiAgICAgIDxwYXRoICAgICAgICAgZD0ibSA5NC41NzY0OTYsNzUuNzc1NTY0IDExLjA0NTgzNCwwIDAsMTIuMDIyNTE2IC0xMS4wNDU4MzQsMCAwLC0xMi4wMjI1MTYgeiBtIDUuMjMyMjM3LDguNDE4MDg3IDAuNTgxMzU3LDAgMCwtNC44MTM2NTggLTAuNTgxMzU3LDAgMCw0LjgxMzY1OCB6IiAgICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtZmFtaWx5OlR1dG9yOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246VHV0b3I7ZmlsbDojZmZmZmZmO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjk3NzUzODIzO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lIiAgICAgICAgIGlkPSJwYXRoMzM5OCIgLz4gICAgICA8cGF0aCAgICAgICAgIGQ9Im0gMTA2LjE4NTUyLDcxLjU2NjUyIDUuMjMyMjQsMCAwLDQuMjA5MDQ0IDUuODEzNTksMCAwLDMuNjA0NDI5IC01LjgxMzU5LDAgMCw0LjgxMzY1OCA1LjgxMzU5LDAgMCwzLjYwNDQyOSAtMTEuMDQ1ODMsMCAwLC0xNi4yMzE1NiB6IiAgICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtZmFtaWx5OlR1dG9yOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246VHV0b3I7ZmlsbDojZmZmZmZmO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjk3NzUzODIzO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lIiAgICAgICAgIGlkPSJwYXRoMzQwMCIgLz4gICAgICA8cGF0aCAgICAgICAgIGQ9Im0gMTE3Ljc5NDU0LDc1Ljc3NTU2NCAxMS4wNDU4NCwwIDAsNy44MTM0NzMgLTUuODEzNiwwIDAsMC42MDQ2MTQgNS44MTM2LDAgMCwzLjYwNDQyOSAtMTEuMDQ1ODQsMCAwLC0xMi4wMjI1MTYgeiBtIDUuMjMyMjQsNC4yMDkwNDMgMC41ODEzNiwwIDAsLTAuNjA0NjE0IC0wLjU4MTM2LDAgMCwwLjYwNDYxNCB6IiAgICAgICAgIHN0eWxlPSJmb250LXN0eWxlOm5vcm1hbDtmb250LXZhcmlhbnQ6bm9ybWFsO2ZvbnQtd2VpZ2h0Om5vcm1hbDtmb250LXN0cmV0Y2g6bm9ybWFsO2ZvbnQtZmFtaWx5OlR1dG9yOy1pbmtzY2FwZS1mb250LXNwZWNpZmljYXRpb246VHV0b3I7ZmlsbDojZmZmZmZmO3N0cm9rZTojMDAwMDAwO3N0cm9rZS13aWR0aDoxLjk3NzUzODIzO3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lIiAgICAgICAgIGlkPSJwYXRoMzQwMiIgLz4gICAgPC9nPiAgPC9nPjwvc3ZnPg==);
+}
+h2.filename {
+  font-family: monospace;
+}
+h1.textidote {
+  width: 378px;
+  height: 68px;
+  display: block;
+}
+.keyword1 {
+  font-weight: bold;
+  color: green;
+}
+.keyword2 {
+  font-weight: bold;
+  color: darkblue;
+}
+.comment, .comment * {
+  color: darkred;
+  font-weight: normal;
+}
+.linenb {
+  font-style: italic;
+  color: lightgrey;
+  width: 30pt;
+  float: left;
+  margin-top: 1pt;
+  margin-bottom: 1pt;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.codeline {
+  margin-left: -30pt;
+  padding-left: 60pt;
+  margin-top: 1pt;
+  margin-bottom: 1pt;
+}
+.no-text {
+  display: none;
+}
+.clear {
+  clear: both;
+}
+</style>
+</head>
+<body>
+<a href="https://sylvainhalle.github.io/textidote"><h1 class="textidote"><span class="no-text">Results of TeXtidote analysis</span></h1></a>
+<p>Here is the result of analyzing your file(s) with TeXtidote. Hover the mouse over highlighted portions of the document to read a tooltip that gives you some writing advice.</p>
+<h2 class="filename">engine_architecture.tex</h2>
+
+<p>Found 16 warning(s)</p>
+<div class="original-file">
+<div class="linenb">&nbsp;&nbsp;1</div><div class="codeline"><span class="keyword1">\section</span>{Game engine architecture}</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;2</div><div class="codeline">The game engine forms an environment for the agent by keeping track of the game state</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;3</div><div class="codeline">(including scores), providing the available actions (moves), and generating possible</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;4</div><div class="codeline">future states and their probabilities in the game tree based on the current knowledge.</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;5</div><div class="codeline">The number of possible states in Carcassonne quickly rises as more tiles are placed on</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;6</div><div class="codeline">the board leading to its high branching factor ($b = 55$ on average \cite{MasterThesisCarcassonne}).</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;7</div><div class="codeline">To maximize the number of states that can be included in the search tree,</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;8</div><div class="codeline">the team opted to implement the game engine from scratch using a fast compilable</div><div class="clear"></div>
+<div class="linenb">&nbsp;&nbsp;9</div><div class="codeline">language to later bridge it with an agent implemented in a language</div><div class="clear"></div>
+<div class="linenb">&nbsp;10</div><div class="codeline">that is better suited for developing AI applications.</div><div class="clear"></div>
+<div class="linenb">&nbsp;11</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;12</div><div class="codeline">Originally, the engine was supposed to be extended to support some game expansions</div><div class="clear"></div>
+<div class="linenb">&nbsp;13</div><div class="codeline">but eventually, this work had to be dropped due to slower-than-anticipated progress on</div><div class="clear"></div>
+<div class="linenb">&nbsp;14</div><div class="codeline">the core aspects of the project.</div><div class="clear"></div>
+<div class="linenb">&nbsp;15</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;16</div><div class="codeline">This section will focus on the architecture of this engine and how the communication within the whole system works.</div><div class="clear"></div>
+<div class="linenb">&nbsp;17</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;18</div><div class="codeline"><span class="keyword1">\subsection</span>{Overview of architecture}</div><div class="clear"></div>
+<div class="linenb">&nbsp;19</div><div class="codeline"><span class="comment"><span class="comment">% Opisanie architektury silnika, sposobu komunikacji między komponentami, a także za co one odpowiadają.</span></span></div><div class="clear"></div>
+<div class="linenb">&nbsp;20</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;21</div><div class="codeline">In this section, the project of game architecture will be discussed.</div><div class="clear"></div>
+<div class="linenb">&nbsp;22</div><div class="codeline">Figure \ref{fig:SystemArchitecture} shows a diagram of the <span class="highlight" title="This word has been used in one of the immediately preceding sentences. Using a synonym could make your text more interesting to read, unless the repetition is intentional.. Suggestions: [entire, full, complete] (1163) [lt:en:EN_REPEATEDWORDS]">whole</span> system as implemented by the team.</div><div class="clear"></div>
+<div class="linenb">&nbsp;23</div><div class="codeline">Computations related to processing games are performed on a CPU,</div><div class="clear"></div>
+<div class="linenb">&nbsp;24</div><div class="codeline">while agents should be trained on a GPU.</div><div class="clear"></div>
+<div class="linenb">&nbsp;25</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;26</div><div class="codeline"><span class="keyword2">\begin{figure*}</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;27</div><div class="codeline">	\centering</div><div class="clear"></div>
+<div class="linenb">&nbsp;28</div><div class="codeline">	\scalebox{.48}{\input{figures/arch.tex}}</div><div class="clear"></div>
+<div class="linenb">&nbsp;29</div><div class="codeline">	<span class="highlight-sh" title="A caption should end with a period [sh:capperiod]"><span class="keyword1">\caption</span>{Diagram of the system's architecture</span>}</div><div class="clear"></div>
+<div class="linenb">&nbsp;30</div><div class="codeline">	<span class="keyword1">\label</span>{fig:SystemArchitecture}</div><div class="clear"></div>
+<div class="linenb">&nbsp;31</div><div class="codeline"><span class="keyword2">\end{figure*}</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;32</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;33</div><div class="codeline">The GameEngine is responsible for evaluating requests it receives from the agents</div><div class="clear"></div>
+<div class="linenb">&nbsp;34</div><div class="codeline">ensuring that Carcassonne's rule set is followed. It maintains currently active games,</div><div class="clear"></div>
+<div class="linenb">&nbsp;35</div><div class="codeline">exposes the current state to the agents, generates possible moves for the given input,</div><div class="clear"></div>
+<div class="linenb">&nbsp;36</div><div class="codeline">and allows simulation of what game state a sequence of actions will lead to (before performing it</div><div class="clear"></div>
+<div class="linenb">&nbsp;37</div><div class="codeline">on an active game). Internally, GameEngine distributes the requests it receives among</div><div class="clear"></div>
+<div class="linenb">&nbsp;38</div><div class="codeline">multiple workers (lightweight threads) that can evaluate them simultaneously. Actions that</div><div class="clear"></div>
+<div class="linenb">&nbsp;39</div><div class="codeline">require state transitions are performed on a state's clone, while read-only operations</div><div class="clear"></div>
+<div class="linenb">&nbsp;40</div><div class="codeline">get performed on the original copy which is meant to enable efficient concurrency.</div><div class="clear"></div>
+<div class="linenb">&nbsp;41</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;42</div><div class="codeline">For each active game, GameEngine logs all of its states to that game's log file,</div><div class="clear"></div>
+<div class="linenb">&nbsp;43</div><div class="codeline">allowing for later consumption by Visualiser. Visualiser parses the logs</div><div class="clear"></div>
+<div class="linenb">&nbsp;44</div><div class="codeline">and presents the game in a graphical form, allowing for analysis by humans.</div><div class="clear"></div>
+<div class="linenb">&nbsp;45</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;46</div><div class="codeline">TrainingSupervisor is responsible for managing communication and supervising agents' training.</div><div class="clear"></div>
+<div class="linenb">&nbsp;47</div><div class="codeline">It should optimise communication by reducing data transfer between CPU and GPU.</div><div class="clear"></div>
+<div class="linenb">&nbsp;48</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;49</div><div class="codeline">The GameEngine (and Visualiser) is implemented in Go, while the agent and TrainingSupervisor</div><div class="clear"></div>
+<div class="linenb">&nbsp;50</div><div class="codeline">are implemented in Python. The use of Go for the engine was meant to allow for better performance of</div><div class="clear"></div>
+<div class="linenb">&nbsp;51</div><div class="codeline">the rule engine<span class="highlight" title="Use a comma before 'but' if it connects two independent clauses (unless they are closely connected and short).. Suggestions: [, but] (2630) [lt:en:COMMA_COMPOUND_SENTENCE]"> but</span> it means that the TrainingSupervisor cannot communicate with it directly.</div><div class="clear"></div>
+<div class="linenb">&nbsp;52</div><div class="codeline">To solve this, the team used the gopy project \cite{gopy} to automatically generate</div><div class="clear"></div>
+<div class="linenb">&nbsp;53</div><div class="codeline">Python bindings \cite{LanguageBindings} for the Go package. This leads to a larger overhead than</div><div class="clear"></div>
+<div class="linenb">&nbsp;54</div><div class="codeline">using manually-written CPython extension would<span class="highlight" title="Use a comma before 'but' if it connects two independent clauses (unless they are closely connected and short).. Suggestions: [, but] (2908) [lt:en:COMMA_COMPOUND_SENTENCE_2]"> but</span> this has been considered acceptable as most of</div><div class="clear"></div>
+<div class="linenb">&nbsp;55</div><div class="codeline">the CPU-bound work happens in the GameEngine itself, not at the communication layer.</div><div class="clear"></div>
+<div class="linenb">&nbsp;56</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;57</div><div class="codeline"><span class="keyword1">\subsection</span>{Components of a solution}</div><div class="clear"></div>
+<div class="linenb">&nbsp;58</div><div class="codeline"><span class="comment"><span class="comment">% Opisanie elementów z jakich się składa rozgrywka m.in.: kafelki i ich elementy, gracze, a także uwzględnione rozszerzenia gry Carcassonne.</span></span></div><div class="clear"></div>
+<div class="linenb">&nbsp;59</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;60</div><div class="codeline">The game <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Carcassonne, Carcass one] (3081) [lt:en:MORFOLOGIK_RULE_EN_GB]">Carcassone</span> is played by placing tiles \cite{CarcassoneRules}. Each tile is represented by a set of features on it. All features are defined by their type, such as road, city, field or monastery, a modifier that modifies the calculation process, and the sides which indicate on which edges the feature is present. In this project, there is only one modifier used - the shield. The engine was designed to accommodate game extensions.</div><div class="clear"></div>
+<div class="linenb">&nbsp;61</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;62</div><div class="codeline">A feature's side is a byte-sized value, in which each bit defines whether the feature is present on a specific half of the tile's edge as shown on Figure \ref{fig:SIDES}. Features such as roads, are represented by a whole edge formed by combining two sides e.g., the TopLeft and TopRight sides.</div><div class="clear"></div>
+<div class="linenb">&nbsp;63</div><div class="codeline"><span class="keyword2">\begin{figure}</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;64</div><div class="codeline">    \centering</div><div class="clear"></div>
+<div class="linenb">&nbsp;65</div><div class="codeline">    <span class="keyword2">\begin{tikzpicture}</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;66</div><div class="codeline">        <span class="comment">%top line</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;67</div><div class="codeline">        \draw [blue] (-3,3) -- (0,3);</div><div class="clear"></div>
+<div class="linenb">&nbsp;68</div><div class="codeline">        \draw [red] (0,3) -- (3,3);</div><div class="clear"></div>
+<div class="linenb">&nbsp;69</div><div class="codeline">        <span class="comment">%right line</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;70</div><div class="codeline">        \draw [blue] (3,3) -- (3,0);</div><div class="clear"></div>
+<div class="linenb">&nbsp;71</div><div class="codeline">        \draw [red] (3,0) -- (3,-3);</div><div class="clear"></div>
+<div class="linenb">&nbsp;72</div><div class="codeline">        <span class="comment">%bottom line</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;73</div><div class="codeline">        \draw [blue] (3,-3) -- (0,-3);</div><div class="clear"></div>
+<div class="linenb">&nbsp;74</div><div class="codeline">        \draw [red] (0,-3) -- (-3,-3);</div><div class="clear"></div>
+<div class="linenb">&nbsp;75</div><div class="codeline">        <span class="comment">%left line</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;76</div><div class="codeline">        \draw [blue] (-3,-3) -- (-3,0);</div><div class="clear"></div>
+<div class="linenb">&nbsp;77</div><div class="codeline">        \draw [red] (-3,0) -- (-3,3);</div><div class="clear"></div>
+<div class="linenb">&nbsp;78</div><div class="codeline">        </div><div class="clear"></div>
+<div class="linenb">&nbsp;79</div><div class="codeline">        \node at (-1.5, 2.7) {TopLeft};</div><div class="clear"></div>
+<div class="linenb">&nbsp;80</div><div class="codeline">        \node at (1.5, 2.7) {TopRight};</div><div class="clear"></div>
+<div class="linenb">&nbsp;81</div><div class="codeline">        </div><div class="clear"></div>
+<div class="linenb">&nbsp;82</div><div class="codeline">        \node [rotate=90] at (2.8, 1.5) {RightTop};</div><div class="clear"></div>
+<div class="linenb">&nbsp;83</div><div class="codeline">        \node [rotate=90] at (2.8, -1.5) {RightBottom};</div><div class="clear"></div>
+<div class="linenb">&nbsp;84</div><div class="codeline">        </div><div class="clear"></div>
+<div class="linenb">&nbsp;85</div><div class="codeline">        \node at (-1.5, -2.8) {BottomLeft};</div><div class="clear"></div>
+<div class="linenb">&nbsp;86</div><div class="codeline">        \node at (1.5, -2.8) {BottomRight};</div><div class="clear"></div>
+<div class="linenb">&nbsp;87</div><div class="codeline">        </div><div class="clear"></div>
+<div class="linenb">&nbsp;88</div><div class="codeline">	<span class="comment">% czy może obrót 90stopni?</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;89</div><div class="codeline">        \node [rotate=270] at (-2.8, 1.5) {LeftTop};</div><div class="clear"></div>
+<div class="linenb">&nbsp;90</div><div class="codeline">        \node [rotate=270] at (-2.8, -1.5) {LeftBottom};</div><div class="clear"></div>
+<div class="linenb">&nbsp;91</div><div class="codeline">    <span class="keyword2">\end{tikzpicture}</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;92</div><div class="codeline">    <span class="highlight-sh" title="A caption should end with a period [sh:capperiod]"><span class="keyword1">\caption</span>{Side representation</span>} <span class="keyword1">\label</span>{fig:SIDES}</div><div class="clear"></div>
+<div class="linenb">&nbsp;93</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
+<div class="linenb">&nbsp;94</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;95</div><div class="codeline">The tiles described do not contain information about their position or meeple placement. This information is located in the PlacedTile struct. The board is represented as a tile set containing tiles used in the game, for verification whether the tile a player wants to place is legal. Moreover, it contains a slice of placed tiles in the same order as the tile set. Additionally, the board includes a city manager used for merging cities, scoring and checking for legal meeple placements in the cities.</div><div class="clear"></div>
+<div class="linenb">&nbsp;96</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;97</div><div class="codeline">A single game is represented by a board, a shuffled deck of tiles, and players partaking in it. Each player knows their score and the number of meeples of each type available to them.</div><div class="clear"></div>
+<div class="linenb">&nbsp;98</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;99</div><div class="codeline">Our solution has been designed to be modifiable by adding extensions to the game. Generalizations, such as meeple type or feature type, allow for the easy implementation of new potential features, <span class="highlight-sh" title="Use a backslash or comma after the second period; otherwise LaTeX will think it is a full stop ending a sentence. [sh:011]">e.g. </span>rivers.</div><div class="clear"></div>
+<div class="linenb">100</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">101</div><div class="codeline"><span class="keyword1">\subsection</span>{Game flow}</div><div class="clear"></div>
+<div class="linenb">102</div><div class="codeline"><span class="comment"><span class="comment">% Opisanie wykonywanych akcji podejmowanych przez silnik gry: wylosowanie kafelka ze stosu, wyliczenie legalnych ułożeń kafelka, wybór położenia i wyliczanie punktacji za jego położenie.</span></span></div><div class="clear"></div>
+<div class="linenb">103</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">104</div><div class="codeline">This section will present the whole flow of the game and the way it was implemented in the engine.</div><div class="clear"></div>
+<div class="linenb">105</div><div class="codeline">Figure \ref{fig:GameFlow} shows a state diagram of the game.</div><div class="clear"></div>
+<div class="linenb">106</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">107</div><div class="codeline"><span class="keyword2">\begin{figure*}</span></div><div class="clear"></div>
+<div class="linenb">108</div><div class="codeline">	\centering</div><div class="clear"></div>
+<div class="linenb">109</div><div class="codeline">	\scalebox{.42}{\input{figures/state-diagram.tex}}</div><div class="clear"></div>
+<div class="linenb">110</div><div class="codeline">	<span class="highlight-sh" title="A caption should end with a period [sh:capperiod]"><span class="keyword1">\caption</span>{Carcassonne's state diagram</span>}</div><div class="clear"></div>
+<div class="linenb">111</div><div class="codeline">	<span class="keyword1">\label</span>{fig:GameFlow}</div><div class="clear"></div>
+<div class="linenb">112</div><div class="codeline"><span class="keyword2">\end{figure*}</span></div><div class="clear"></div>
+<div class="linenb">113</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">114</div><div class="codeline">Before the game can start, a few actions need to be performed as part of the <span class="keyword1">\textbf</span>{Preparation} stage:</div><div class="clear"></div>
+<div class="linenb">115</div><div class="codeline"><span class="keyword2">\begin{itemize}</span></div><div class="clear"></div>
+<div class="linenb">116</div><div class="codeline">	<span class="keyword1">\item</span> <span class="highlight" title="This sentence does not start with an uppercase letter.. Suggestions: [Putting] (4931) [lt:en:UPPERCASE_SENTENCE_START]">putting</span> a start tile on the board,</div><div class="clear"></div>
+<div class="linenb">117</div><div class="codeline">	<span class="keyword1">\item</span> generating a stack of all (remaining) tiles in random order,</div><div class="clear"></div>
+<div class="linenb">118</div><div class="codeline">	<span class="keyword1">\item</span> setting the figure count for each player to $7$,</div><div class="clear"></div>
+<div class="linenb">119</div><div class="codeline">	<span class="keyword1">\item</span> resetting the scores of all players to $0$,</div><div class="clear"></div>
+<div class="linenb">120</div><div class="codeline">	<span class="keyword1">\item</span> choosing the player order.</div><div class="clear"></div>
+<div class="linenb">121</div><div class="codeline"><span class="keyword2">\end{itemize}</span></div><div class="clear"></div>
+<div class="linenb">122</div><div class="codeline">In the implementation, these steps are executed when a new game object (along with its board</div><div class="clear"></div>
+<div class="linenb">123</div><div class="codeline">and players) is created. The player order is fixed<span class="highlight" title="Use a comma before 'and' if it connects two independent clauses (unless they are closely connected and short).. Suggestions: [, and] (5291) [lt:en:COMMA_COMPOUND_SENTENCE_2]"> and</span> the stack is internal to the engine</div><div class="clear"></div>
+<div class="linenb">124</div><div class="codeline">to avoid leaking its order to the agents.</div><div class="clear"></div>
+<div class="linenb">125</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">126</div><div class="codeline">Once the game starts, the players take turns with the drawn tiles. The engine takes tiles from</div><div class="clear"></div>
+<div class="linenb">127</div><div class="codeline">the top of game's stack of remaining tiles (<span class="keyword1">\textbf</span>{Tile draw}) until it finds one that can be</div><div class="clear"></div>
+<div class="linenb">128</div><div class="codeline">placed somewhere on the board which it then includes as part of the state passed to the agent.</div><div class="clear"></div>
+<div class="linenb">129</div><div class="codeline">When no tiles are left on the stack, the engine proceeds to the <span class="keyword1">\textbf</span>{Final scoring} stage</div><div class="clear"></div>
+<div class="linenb">130</div><div class="codeline">(described later).</div><div class="clear"></div>
+<div class="linenb">131</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">132</div><div class="codeline">Once the agent knows the tile it needs to place, it needs to <span class="highlight" title="This word has been used in one of the immediately preceding sentences. Using a synonym could make your text more interesting to read, unless the repetition is intentional.. Suggestions: [decide, select, pick] (5816) [lt:en:EN_REPEATEDWORDS]">choose</span> <span class="keyword1">\textbf</span>{Tile placement} and,</div><div class="clear"></div>
+<div class="linenb">133</div><div class="codeline">if it has any figures, <span class="keyword1">\textbf</span>{Figure placement}. In the implementation, this is performed</div><div class="clear"></div>
+<div class="linenb">134</div><div class="codeline">as a single action - the agent has to <span class="highlight" title="This word has been used in one of the immediately preceding sentences. Using a synonym could make your text more interesting to read, unless the repetition is intentional.. Suggestions: [decide, select, pick] (5963) [lt:en:EN_REPEATEDWORDS]">choose</span> both the position/rotation of the tile and the feature</div><div class="clear"></div>
+<div class="linenb">135</div><div class="codeline">to put a meeple on (if any) which it then sends as input to play the turn.</div><div class="clear"></div>
+<div class="linenb">136</div><div class="codeline">The engine allows the agent to ask for valid tile placements as well as valid features to</div><div class="clear"></div>
+<div class="linenb">137</div><div class="codeline">place meeple on for the given tile, taking into account whether that feature (which can spread</div><div class="clear"></div>
+<div class="linenb">138</div><div class="codeline">over several tiles) does not already have a meeple placed. When a meeple is placed,</div><div class="clear"></div>
+<div class="linenb">139</div><div class="codeline">the player's meeple count is decremented by $1$.</div><div class="clear"></div>
+<div class="linenb">140</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">141</div><div class="codeline">After the tile is placed (following the validation of the move by the engine),</div><div class="clear"></div>
+<div class="linenb">142</div><div class="codeline">we need to proceed with <span class="keyword1">\textbf</span>{Feature scoring}. During this stage, all features that have been</div><div class="clear"></div>
+<div class="linenb">143</div><div class="codeline">completed after the tile was placed have to be identified, the control over them needs to be resolved,</div><div class="clear"></div>
+<div class="linenb">144</div><div class="codeline">and then points need to be awarded to the controlling players and their meeple counts updated.</div><div class="clear"></div>
+<div class="linenb">145</div><div class="codeline">The implementation performs this when handling the request of placing a tile (with meeple) on the board.</div><div class="clear"></div>
+<div class="linenb">146</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">147</div><div class="codeline">After <span class="keyword1">\textbf</span>{Feature scoring}, the next player takes a turn and the game continues</div><div class="clear"></div>
+<div class="linenb">148</div><div class="codeline">until the stack of remaining tiles is empty. To get the final results,</div><div class="clear"></div>
+<div class="linenb">149</div><div class="codeline"><span class="keyword1">\textbf</span>{Final scoring} is performed after emptying the stack. This consists of scoring</div><div class="clear"></div>
+<div class="linenb">150</div><div class="codeline">all uncompleted features and all features known as end-of-game features</div><div class="clear"></div>
+<div class="linenb">151</div><div class="codeline">(in the base game, just fields).</div><div class="clear"></div>
+<div class="linenb">152</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">153</div><div class="codeline"><span class="keyword1">\subsection</span>{Communication within a system} <span class="keyword1">\label</span>{communication}</div><div class="clear"></div>
+<div class="linenb">154</div><div class="codeline"><span class="comment"><span class="comment">% Opisanie komunikacji pomiędzy silnikiem gry, a sieciami neuronowymi uczonymi na karcie graficznej. Aktualizacja stanu gry w zależności od akcji podejmowanych przez agenta.</span></span></div><div class="clear"></div>
+<div class="linenb">155</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">156</div><div class="codeline">The game engine is capable of handling multiple game instances, by using Go pipelines and goroutines \cite{GolangPipeline}, which allows for many agents to play and learn simultaneously. The engine provides several request types necessary for the agents, to retrieve information about the game. There are five such requests:</div><div class="clear"></div>
+<div class="linenb">157</div><div class="codeline"><span class="keyword2">\begin{itemize}</span></div><div class="clear"></div>
+<div class="linenb">158</div><div class="codeline">    <span class="keyword1">\item</span> CloneGame - used for creating a separate clone of a game. It allows the agent to expand the game tree, and each clone can be modified by the agent, by simulating its next potential move.</div><div class="clear"></div>
+<div class="linenb">159</div><div class="codeline">    <span class="keyword1">\item</span> GetRemainingTiles - returns all available tiles that have not yet been placed. With this data, the agent can expand the game tree for each possible move that might occur. The returned tiles come with information about their probability.</div><div class="clear"></div>
+<div class="linenb">160</div><div class="codeline">    <span class="keyword1">\item</span> GetLegalMoves - returns all legal moves for a given tile. It considers where the tile can be placed and where are the possible meeple placements on it.</div><div class="clear"></div>
+<div class="linenb">161</div><div class="codeline">    <span class="keyword1">\item</span> GetMidGameScore - returns the information about the score for all players, calculated as if the game has just finished.</div><div class="clear"></div>
+<div class="linenb">162</div><div class="codeline">    <span class="keyword1">\item</span> PlayTurn - allows the agent to play a turn using a given tile, and modifies the game state. It returns the new state of the game.</div><div class="clear"></div>
+<div class="linenb">163</div><div class="codeline"><span class="keyword2">\end{itemize}</span></div><div class="clear"></div>
+<div class="linenb">164</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">165</div><div class="codeline">With these requests, the agent is capable of building its game tree and performing the selected actions.</div><div class="clear"></div>
+<div class="linenb">166</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">167</div><div class="codeline">To provide the neural network with the game state, a serialization process is required. The serialized game contains all players' statistics (meeple counts, score) and all tiles on the board. The placed tiles on the board are represented in the binary format to ensure a fixed memory size of 8 bytes. The slice of binary tiles consists of all tiles in the same order as tiles in tile set. The tiles in this array that are not yet placed are set to zero.</div><div class="clear"></div>
+<div class="linenb">168</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">169</div><div class="codeline"><span class="keyword1">\subsection</span>{Performance}</div><div class="clear"></div>
+<div class="linenb">170</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">171</div><div class="codeline">Once the engine implementation reached a certain stage,</div><div class="clear"></div>
+<div class="linenb">172</div><div class="codeline">the team created a benchmark suite measuring the performance of the engine’s operations.</div><div class="clear"></div>
+<div class="linenb">173</div><div class="codeline">This allowed us to assess if the overall performance was acceptable and ensured that</div><div class="clear"></div>
+<div class="linenb">174</div><div class="codeline">no performance regressions were introduced at a later stage of the implementation.</div><div class="clear"></div>
+<div class="linenb">175</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">176</div><div class="codeline">The benchmark suite consists of two types of benchmark tests.</div><div class="clear"></div>
+<div class="linenb">177</div><div class="codeline">The first one is feature tests and the second one is engine request tests.</div><div class="clear"></div>
+<div class="linenb">178</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">179</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">180</div><div class="codeline"><span class="keyword1">\subsubsection</span>{Feature tests}</div><div class="clear"></div>
+<div class="linenb">181</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">182</div><div class="codeline">The aim of the feature tests is measuring the time that processing of</div><div class="clear"></div>
+<div class="linenb">183</div><div class="codeline">a specific feature type contributes to the overall time of turn processing.</div><div class="clear"></div>
+<div class="linenb">184</div><div class="codeline">During the measurement, a test for a specific feature places tiles consisting of</div><div class="clear"></div>
+<div class="linenb">185</div><div class="codeline">only that specific feature. For each feature, two testing strategies were used:</div><div class="clear"></div>
+<div class="linenb">186</div><div class="codeline"><span class="keyword2">\begin{itemize}</span></div><div class="clear"></div>
+<div class="linenb">187</div><div class="codeline">	<span class="keyword1">\item</span> <span class="highlight" title="This sentence does not start with an uppercase letter.. Suggestions: [A] (9757) [lt:en:UPPERCASE_SENTENCE_START]">a</span> test with a single game where each tile is placed on the right of the previous one,</div><div class="clear"></div>
+<div class="linenb">188</div><div class="codeline">          resulting in a long row of tiles consisting of that feature,</div><div class="clear"></div>
+<div class="linenb">189</div><div class="codeline">    <span class="keyword1">\item</span> a test with many shorter (in terms of the tile count) games,</div><div class="clear"></div>
+<div class="linenb">190</div><div class="codeline">          each ending with a short row of tiles consisting of that feature.</div><div class="clear"></div>
+<div class="linenb">191</div><div class="codeline"><span class="keyword2">\end{itemize}</span></div><div class="clear"></div>
+<div class="linenb">192</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">193</div><div class="codeline"><span class="keyword1">\subsubsection</span>{Engine request tests}</div><div class="clear"></div>
+<div class="linenb">194</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">195</div><div class="codeline">The aim of the engine request tests is to measure the time of both the game processing</div><div class="clear"></div>
+<div class="linenb">196</div><div class="codeline">and the abstraction on top of it that the agents use. The time measured here reflects</div><div class="clear"></div>
+<div class="linenb">197</div><div class="codeline">how long the agent has to wait on requests to get responses. The individual tests measure</div><div class="clear"></div>
+<div class="linenb">198</div><div class="codeline">specific requests from the ones documented in the earlier section (\ref{communication}).</div><div class="clear"></div>
+<div class="linenb">199</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">200</div><div class="codeline">Each request is tested by simulating 100 semi-random games. In each turn, for each game instance,</div><div class="clear"></div>
+<div class="linenb">201</div><div class="codeline">the tested request is called and the total execution of the request is measured.</div><div class="clear"></div>
+<div class="linenb">202</div><div class="codeline">If the tested request mutates the game, it is evaluated on a temporary copy.</div><div class="clear"></div>
+<div class="linenb">203</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">204</div><div class="codeline"><span class="keyword1">\subsubsection</span>{Improving performance}</div><div class="clear"></div>
+<div class="linenb">205</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">206</div><div class="codeline">After evaluating the performance as well as testing the whole system with</div><div class="clear"></div>
+<div class="linenb">207</div><div class="codeline">an agent implementation, we've observed that the efficiency of the engine does not</div><div class="clear"></div>
+<div class="linenb">208</div><div class="codeline">realistically allow us to train an agent with a full standard tile set (72 tiles).</div><div class="clear"></div>
+<div class="linenb">209</div><div class="codeline">The expansion of a tree by just one level was already proving to be problematic.</div><div class="clear"></div>
+<div class="linenb">210</div><div class="codeline">To mitigate this, we worked on improving the engine's performance.</div><div class="clear"></div>
+<div class="linenb">211</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">212</div><div class="codeline">We found and implemented a few ideas for enhancing the efficiency of the system:</div><div class="clear"></div>
+<div class="linenb">213</div><div class="codeline"><span class="keyword2">\begin{itemize}</span></div><div class="clear"></div>
+<div class="linenb">214</div><div class="codeline">	<span class="keyword1">\item</span> <span class="highlight" title="This sentence does not start with an uppercase letter.. Suggestions: [Allowing] (11166) [lt:en:UPPERCASE_SENTENCE_START]">allowing</span> to compare tile and placed tile types without needing to convert one to another,</div><div class="clear"></div>
+<div class="linenb">215</div><div class="codeline">    <span class="keyword1">\item</span> updating the null logger implementation to be a full no-op,</div><div class="clear"></div>
+<div class="linenb">216</div><div class="codeline">    <span class="keyword1">\item</span> allowing the engine to receive requests from the agent on multiple threads,</div><div class="clear"></div>
+<div class="linenb">217</div><div class="codeline">    <span class="keyword1">\item</span> changing the tile representation to simple integers of a constant size (<span class="highlight-sh" title="Use a backslash or comma after the second period; otherwise LaTeX will think it is a full stop ending a sentence. [sh:011]">i.e. </span>no slices)</div><div class="clear"></div>
+<div class="linenb">218</div><div class="codeline">          that can be operated on with bitwise operations,</div><div class="clear"></div>
+<div class="linenb">219</div><div class="codeline">    <span class="keyword1">\item</span> holding just the shield count rather than the exact positions of shields in cities,</div><div class="clear"></div>
+<div class="linenb">220</div><div class="codeline">    <span class="keyword1">\item</span> decreasing the size of enum types such as feature type and shield flag to a single byte,</div><div class="clear"></div>
+<div class="linenb">221</div><div class="codeline">    <span class="keyword1">\item</span> decreasing the size of X and Y position coordinates to single-byte integers.</div><div class="clear"></div>
+<div class="linenb">222</div><div class="codeline"><span class="keyword2">\end{itemize}</span></div><div class="clear"></div>
+<div class="linenb">223</div><div class="codeline">Some of the above solutions resulted in promising improvements,</div><div class="clear"></div>
+<div class="linenb">224</div><div class="codeline">while others offered smaller <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [speed-ups, speed ups] (11907) [lt:en:MORFOLOGIK_RULE_EN_GB]">speedups</span> or, in some cases, had the opposite effect.</div><div class="clear"></div>
+<div class="linenb">225</div><div class="codeline">Overall, the performance gains were not enough to allow for use in agent training.</div><div class="clear"></div>
+</div>
+<h2 class="filename">sections/experiment.tex</h2>
+
+<p>Found 2 warning(s)</p>
+<div class="original-file">
+<div class="linenb">&nbsp;1</div><div class="codeline">\<span class="highlight-sh" title="This section is very short (about 126 words). You should consider merging it with another section or make it longer. [sh:seclen]">section</span>{Experiment design}</div><div class="clear"></div>
+<div class="linenb">&nbsp;2</div><div class="codeline">This research aims to answer the following question:</div><div class="clear"></div>
+<div class="linenb">&nbsp;3</div><div class="codeline">What level of play does the agent based on reinforcement learning achieve compared to random and greedy players?</div><div class="clear"></div>
+<div class="linenb">&nbsp;4</div><div class="codeline">The team hypothesis was that the agent based on reinforcement learning will be </div><div class="clear"></div>
+<div class="linenb">&nbsp;5</div><div class="codeline">able to achieve better results than an agent using naive tree search algorithms </div><div class="clear"></div>
+<div class="linenb">&nbsp;6</div><div class="codeline">both against human and computer random players. The criterion of success was </div><div class="clear"></div>
+<div class="linenb">&nbsp;7</div><div class="codeline">measured as an average points scored by the agent.</div><div class="clear"></div>
+<div class="linenb">&nbsp;8</div><div class="codeline">During the research, the team conducted a series of simulations and real-time experiments. </div><div class="clear"></div>
+<div class="linenb">&nbsp;9</div><div class="codeline">The first method was used to run games between computer agents, while the second </div><div class="clear"></div>
+<div class="linenb">10</div><div class="codeline">- between the agent and human players.  <span class="highlight" title="Consider using 'All the'.. Suggestions: [All the] (688) [lt:en:ALL_OF_THE]">All of the</span> games were stored as logs </div><div class="clear"></div>
+<div class="linenb">11</div><div class="codeline">which allowed us to easily reconstruct the games and strategies.</div><div class="clear"></div>
+<div class="linenb">12</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+</div>
+<h2 class="filename">main.tex</h2>
+
+<p>Found 56 warning(s)</p>
+<div class="original-file">
+<div class="linenb">&nbsp;1</div><div class="codeline"><span class="keyword1">\documentclass</span>[11pt,twocolumn]{article}</div><div class="clear"></div>
+<div class="linenb">&nbsp;2</div><div class="codeline"><span class="keyword1">\usepackage</span>{authblk}</div><div class="clear"></div>
+<div class="linenb">&nbsp;3</div><div class="codeline"><span class="keyword1">\usepackage</span>{pslatex, graphicx, amssymb, amsmath}</div><div class="clear"></div>
+<div class="linenb">&nbsp;4</div><div class="codeline"><span class="keyword1">\usepackage</span>{tikz}</div><div class="clear"></div>
+<div class="linenb">&nbsp;5</div><div class="codeline"><span class="comment"><span class="comment">%%%% Redefine abstract environment</span></span></div><div class="clear"></div>
+<div class="linenb">&nbsp;6</div><div class="codeline">\def\abstract{</div><div class="clear"></div>
+<div class="linenb">&nbsp;7</div><div class="codeline">\typeout{Abstract}</div><div class="clear"></div>
+<div class="linenb">&nbsp;8</div><div class="codeline"> {\bf Abstract} </div><div class="clear"></div>
+<div class="linenb">&nbsp;9</div><div class="codeline">} \def\endabstract{\par}</div><div class="clear"></div>
+<div class="linenb">10</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">11</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">12</div><div class="codeline"><span class="keyword2">\begin{document}</span></div><div class="clear"></div>
+<div class="linenb">13</div><div class="codeline"><span class="keyword1">\title</span>{Solving the Carcassonne board game using reinforcement learning agents}</div><div class="clear"></div>
+<div class="linenb">14</div><div class="codeline">\author[1]{Bartosz <span class="highlight-spelling" title="Possible spelling mistake found. (89) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>Strzelecki}</div><div class="clear"></div>
+<div class="linenb">15</div><div class="codeline">\author[1]{<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Bona, Borna] (110) [lt:en:MORFOLOGIK_RULE_EN_GB]">Bogna</span> Lew}</div><div class="clear"></div>
+<div class="linenb">16</div><div class="codeline">\author[1]{Jakub <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Kudzus] (136) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>Kuczys}</div><div class="clear"></div>
+<div class="linenb">17</div><div class="codeline">\author[1]{Jakub <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Whereby, Sierra, ERBA, Mieza, Tierra, Wiarda, Wiertz, Kiera, Yerba] (159) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>Wierzba}</div><div class="clear"></div>
+<div class="linenb">18</div><div class="codeline">\author[1]{Krzysztof <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Pulaski, Cesarsky, PISAI, misRSI, Hisashi, Ibaraki, Picardi] (187) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>Pisarski}</div><div class="clear"></div>
+<div class="linenb">19</div><div class="codeline">\author[2]{Piotr <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Aronowitz, Monowitz] (212) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>Mironowicz}</div><div class="clear"></div>
+<div class="linenb">20</div><div class="codeline">\<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [affix] (224) [lt:en:MORFOLOGIK_RULE_EN_GB]">affil</span>[1]{Faculty of Electronics, Telecommunications and Informatics, Gdańsk University of Technology, 80-233 Gdańsk, Poland}</div><div class="clear"></div>
+<div class="linenb">21</div><div class="codeline">\<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [affix] (348) [lt:en:MORFOLOGIK_RULE_EN_GB]">affil</span>[2]{Department of Algorithms and System <span class="highlight-spelling" title="Possible spelling mistake. 'Modeling' is American English.. Suggestions: [Modelling] (392) [lt:en:MORFOLOGIK_RULE_EN_GB]">Modeling</span>, Faculty of Electronics, Telecommunications and Informatics, Gdańsk University of Technology, 80-233 Gdańsk, Poland}</div><div class="clear"></div>
+<div class="linenb">22</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">23</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">24</div><div class="codeline"><span class="keyword1">\maketitle</span></div><div class="clear"></div>
+<div class="linenb">25</div><div class="codeline"><span class="keyword2">\begin{abstract}</span></div><div class="clear"></div>
+<div class="linenb">26</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">27</div><div class="codeline">  \input{abstract}</div><div class="clear"></div>
+<div class="linenb">28</div><div class="codeline">  </div><div class="clear"></div>
+<div class="linenb">29</div><div class="codeline"><span class="keyword2">\end{abstract}</span></div><div class="clear"></div>
+<div class="linenb">30</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">31</div><div class="codeline">\input{sections/introduction.tex}</div><div class="clear"></div>
+<div class="linenb">32</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">33</div><div class="codeline">\input{engine_architecture.tex}</div><div class="clear"></div>
+<div class="linenb">34</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">35</div><div class="codeline">\input{sections/agent_architecture.tex}</div><div class="clear"></div>
+<div class="linenb">36</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">37</div><div class="codeline">\input{sections/experiment.tex}</div><div class="clear"></div>
+<div class="linenb">38</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">39</div><div class="codeline">\input{sections/results.tex}</div><div class="clear"></div>
+<div class="linenb">40</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">41</div><div class="codeline"><span class="keyword2">\begin{<span class="highlight" title="This sentence does not start with an uppercase letter.. Suggestions: [Thebibliography00] (540) [lt:en:UPPERCASE_SENTENCE_START]"></span>thebibliography}</span>{00}</div><div class="clear"></div>
+<div class="linenb">42</div><div class="codeline">\bibitem{<span class="highlight-spelling" title="Possible spelling mistake found. (558) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>CarcassoneRules}</div><div class="clear"></div>
+<div class="linenb">43</div><div class="codeline">K. Wrede, Carcassonne rules, Z-Man Games, 2016.</div><div class="clear"></div>
+<div class="linenb">44</div><div class="codeline"><span class="comment"><span class="comment">% https://images.zmangames.com/filer\_public/d5/20/d5208d61-8583-478b-a06d-b49fc9cd7aaa/zm7810\_carcassonne\_rules.pdf</span></span></div><div class="clear"></div>
+<div class="linenb">45</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">46</div><div class="codeline">\bibitem{<span class="highlight-spelling" title="Possible spelling mistake found. (623) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>GolangPipeline}</div><div class="clear"></div>
+<div class="linenb">47</div><div class="codeline">S. <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Ajman, Armani, Ajman i] (641) [lt:en:MORFOLOGIK_RULE_EN_GB]">Ajmani</span>, Go Concurrency Patterns: Pipelines and cancellation, The Go Blog, 2014:<span class="highlight-sh" title="There should be a space after a period. If you are writing a URL or a filename, use the \url{} or \verb markup. [sh:d:002]"> https://go.de</span>v/blog/pipelines</div><div class="clear"></div>
+<div class="linenb">48</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">49</div><div class="codeline">\bibitem{<span class="highlight-spelling" title="Possible spelling mistake found. (752) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>AlphaGoAlgorithm}</div><div class="clear"></div>
+<div class="linenb">50</div><div class="codeline">Silver, D., <span class="highlight-spelling" title="Possible spelling mistake found. (781) [lt:en:MORFOLOGIK_RULE_EN_GB]">Schrittwieser</span>, J., <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Simony an] (800) [lt:en:MORFOLOGIK_RULE_EN_GB]">Simonyan</span>, K. <span class="highlight-sh" title="Use a backslash, comma, or tilde after the period; otherwise LaTeX will think it is a full stop ending a sentence. [sh:010]">et al. </span>Mastering the game of Go without human knowledge. Nature 550, 354–359 (2017).<span class="highlight-sh" title="There should be a space after a period. If you are writing a URL or a filename, use the \url{} or \verb markup. [sh:d:002]"> https://doi.or</span>g/10.1038/nature24270</div><div class="clear"></div>
+<div class="linenb">51</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">52</div><div class="codeline">\bibitem{<span class="highlight-spelling" title="Possible spelling mistake found. (935) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>AlphaGoBlog}</div><div class="clear"></div>
+<div class="linenb">53</div><div class="codeline">Google DeepMind. AlphaGo.<span class="highlight-sh" title="There should be a space after a period. If you are writing a URL or a filename, use the \url{} or \verb markup. [sh:d:002]"> https://deepmind.go</span>ogle/research/breakthroughs/alphago/ (accessed: 28.05.2024)</div><div class="clear"></div>
+<div class="linenb">54</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">55</div><div class="codeline">\bibitem{<span class="highlight-spelling" title="Possible spelling mistake found. (1053) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>AlphaGoZeroBlog}</div><div class="clear"></div>
+<div class="linenb">56</div><div class="codeline">David Silver and <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Demi's, Demi, Demise, Demos, Denis, Dermis, Semis, Delis, Demit, Demas, Demist, Demits, Desis, Dems] (1086) [lt:en:MORFOLOGIK_RULE_EN_GB]">Demis</span> <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Sassabies] (1092) [lt:en:MORFOLOGIK_RULE_EN_GB]">Hassabis</span>. Alpha{G}o {Z}ero: {S}tarting from scratch.<span class="highlight-sh" title="There should be a space after a period. If you are writing a URL or a filename, use the \url{} or \verb markup. [sh:d:002]"> https://deepmind.go</span>ogle/discover/blog/alphago-zero-starting-from-scratch/ (accessed: 28.05.2024)</div><div class="clear"></div>
+<div class="linenb">57</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">58</div><div class="codeline">\bibitem{<span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Alphabet, Alphabets, Alfredo, Affero, Alhazen, Alphage, Alphameric] (1237) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>AlphaZero}</div><div class="clear"></div>
+<div class="linenb">59</div><div class="codeline"> Silver, David; Hubert, Thomas; <span class="highlight-spelling" title="Possible spelling mistake found. (1279) [lt:en:MORFOLOGIK_RULE_EN_GB]">Schrittwieser</span>, Julian; <span class="highlight-spelling" title="Possible spelling mistake found. (1302) [lt:en:MORFOLOGIK_RULE_EN_GB]">Antonoglou</span>, Ioannis; <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Law, Laid, Lay, Lap, Lab, Lag, Lair, Lad, Lax, LSI, Lac, Laic, AAI, AI, CAI, DAI, EAI, FAI, HAI, IAI, JAI, Kai, LA, LAH, LAK, LAN, LAR, LAT, LAU, LAW, LAZ, LBI, LFI, LHI, LI, LNI, LOI, LPI, LRI, LTI, La, Lais, Las, Lau, Li, OAI, RAI, Rai, SAI, TAI, UAI, Wai, Lah, Lain, Lam, Lei, Lvi, Lxi, Tai, Ai] (1323) [lt:en:MORFOLOGIK_RULE_EN_GB]">Lai</span>, Matthew; <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Suez, GUE, Ruez, Geez] (1337) [lt:en:MORFOLOGIK_RULE_EN_GB]">Guez</span>, Arthur; <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Lancelot, Langton, Lancet, Lancaut, Langtoft, Sancton] (1351) [lt:en:MORFOLOGIK_RULE_EN_GB]">Lanctot</span>, Marc; <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Sire, SIFE] (1366) [lt:en:MORFOLOGIK_RULE_EN_GB]">Sifre</span>, Laurent; <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Kumara, Kumar an] (1382) [lt:en:MORFOLOGIK_RULE_EN_GB]">Kumaran</span>, <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Darshan] (1391) [lt:en:MORFOLOGIK_RULE_EN_GB]">Dharshan</span>; <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Grape, Grapes, Gravel, Repel, Graeme, Grasped, Grapple, Gretel, Rappel, Grapnel, Grapey, Grasper] (1401) [lt:en:MORFOLOGIK_RULE_EN_GB]">Graepel</span>, Thore; <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Lillian, Milligram, Milligray, Lilliana] (1417) [lt:en:MORFOLOGIK_RULE_EN_GB]">Lillicrap</span>, Timothy; <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Simony an] (1437) [lt:en:MORFOLOGIK_RULE_EN_GB]">Simonyan</span>, Karen; <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Sassabies] (1454) [lt:en:MORFOLOGIK_RULE_EN_GB]">Hassabis</span>, <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Demi's, Demi, Demise, Demos, Denis, Dermis, Semis, Delis, Demit, Demas, Demist, Demits, Desis, Dems] (1464) [lt:en:MORFOLOGIK_RULE_EN_GB]">Demis</span> (December 5, 2017). <span class="highlight-sh" title="Use `` and '' instead of ''. [sh:d:008]">"</span>Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm<span class="highlight-sh" title="Use `` and '' instead of ''. [sh:d:008]">"</span>. arXiv:1712.01815<span class="highlight-sh" title="There should be a space after a period. If you are writing a URL or a filename, use the \url{} or \verb markup. [sh:d:002]"> [cs.AI</span>].</div><div class="clear"></div>
+<div class="linenb">60</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">61</div><div class="codeline">\bibitem{<span class="highlight-spelling" title="Possible spelling mistake found. (1607) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>AlphaGoZero}</div><div class="clear"></div>
+<div class="linenb">62</div><div class="codeline">Silver, D., <span class="highlight-spelling" title="Possible spelling mistake found. (1631) [lt:en:MORFOLOGIK_RULE_EN_GB]">Schrittwieser</span>, J., <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Simony an] (1650) [lt:en:MORFOLOGIK_RULE_EN_GB]">Simonyan</span>, K. <span class="highlight-sh" title="Use a backslash, comma, or tilde after the period; otherwise LaTeX will think it is a full stop ending a sentence. [sh:010]">et al. </span>Mastering the game of Go without human knowledge. Nature 550, 354–359 (2017).<span class="highlight-sh" title="There should be a space after a period. If you are writing a URL or a filename, use the \url{} or \verb markup. [sh:d:002]"> https://doi.or</span>g/10.1038/nature24270</div><div class="clear"></div>
+<div class="linenb">63</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">64</div><div class="codeline">\bibitem{<span class="highlight-spelling" title="Possible spelling mistake found. (1785) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>MasterThesisCarcassonne}</div><div class="clear"></div>
+<div class="linenb">65</div><div class="codeline">C. <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Hayden, Leyden, Hoyden, Hebden, Heydon, Hey den] (1812) [lt:en:MORFOLOGIK_RULE_EN_GB]">Heyden</span>, Implementing a computer player for Carcassonne, Master's thesis, Department of Knowledge Engineering, Maastricht University, 2009,</div><div class="clear"></div>
+<div class="linenb">66</div><div class="codeline">pages 13-14.</div><div class="clear"></div>
+<div class="linenb">67</div><div class="codeline"><span class="comment"><span class="comment">% https://project.dke.maastrichtuniversity.nl/games/files/msc/MasterThesisCarcassonne.pdf</span></span></div><div class="clear"></div>
+<div class="linenb">68</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">69</div><div class="codeline">\bibitem{<span class="highlight" title="This sentence does not start with an uppercase letter.. Suggestions: [Gopy] (1965) [lt:en:UPPERCASE_SENTENCE_START]"></span>gopy}</div><div class="clear"></div>
+<div class="linenb">70</div><div class="codeline">The go-python Authors, gopy project:<span class="highlight-sh" title="There should be a space after a period. If you are writing a URL or a filename, use the \url{} or \verb markup. [sh:d:002]"> https://github.co</span>m/go-python/gopy</div><div class="clear"></div>
+<div class="linenb">71</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">72</div><div class="codeline">\bibitem{<span class="highlight-spelling" title="Possible spelling mistake found. (2042) [lt:en:MORFOLOGIK_RULE_EN_GB]"></span>LanguageBindings}</div><div class="clear"></div>
+<div class="linenb">73</div><div class="codeline">Wikipedia contributors, Language binding, Wikipedia, The Free Encyclopedia, 2024:</div><div class="clear"></div>
+<div class="linenb">74</div><div class="codeline">https://en.wikipedia.org/wiki/Language\_binding</div><div class="clear"></div>
+<div class="linenb">75</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">76</div><div class="codeline">\bibitem{<span class="highlight" title="This sentence does not start with an uppercase letter.. Suggestions: [Samplejournal] (2190) [lt:en:UPPERCASE_SENTENCE_START]"></span>samplejournal}</div><div class="clear"></div>
+<div class="linenb">77</div><div class="codeline">N. Author, Title of paper, Title of the journal, volume, year,</div><div class="clear"></div>
+<div class="linenb">78</div><div class="codeline">pages.</div><div class="clear"></div>
+<div class="linenb">79</div><div class="codeline">\bibitem{<span class="highlight" title="This sentence does not start with an uppercase letter.. Suggestions: [Samplebook] (2274) [lt:en:UPPERCASE_SENTENCE_START]"></span>samplebook}</div><div class="clear"></div>
+<div class="linenb">80</div><div class="codeline">N. Author, Title of book, Publisher, place and</div><div class="clear"></div>
+<div class="linenb">81</div><div class="codeline">year.</div><div class="clear"></div>
+<div class="linenb">82</div><div class="codeline">\bibitem{<span class="highlight" title="This sentence does not start with an uppercase letter.. Suggestions: [Samplechapter] (2338) [lt:en:UPPERCASE_SENTENCE_START]"></span>samplechapter}</div><div class="clear"></div>
+<div class="linenb">83</div><div class="codeline">N. Author, Title of paper, In: Title of monograph, name(s) of editor, publisher, place and year, pages.</div><div class="clear"></div>
+<div class="linenb">84</div><div class="codeline"><span class="keyword2">\end{<span class="highlight" title="This sentence does not start with an uppercase letter.. Suggestions: [Thebibliography] (2456) [lt:en:UPPERCASE_SENTENCE_START]"></span>thebibliography}</span></div><div class="clear"></div>
+<div class="linenb">85</div><div class="codeline"><span class="keyword2">\end{document}</span></div><div class="clear"></div>
+</div>
+<h2 class="filename">abstract.tex</h2>
+
+<p>Found 2 warning(s)</p>
+<div class="original-file">
+<div class="linenb">&nbsp;1</div><div class="codeline">This article explores the use of artificial intelligence in board games, focusing</div><div class="clear"></div>
+<div class="linenb">&nbsp;2</div><div class="codeline">on the advancements of AlphaG<span class="highlight-sh" title="Add a space before citation or reference. [sh:c:001]">o\cite</span>{AlphaGoAlgorithm} and AlphaGo Zer<span class="highlight-sh" title="Add a space before citation or reference. [sh:c:001]">o\cite</span>{AlphaGoZero}. </div><div class="clear"></div>
+<div class="linenb">&nbsp;3</div><div class="codeline">AlphaGo marked a milestone in AI by defeating professional Go players using a </div><div class="clear"></div>
+<div class="linenb">&nbsp;4</div><div class="codeline">combination of supervised learning and neural networks for policy and value estimation. </div><div class="clear"></div>
+<div class="linenb">&nbsp;5</div><div class="codeline">AlphaGo Zero simplified the architecture by integrating policy and value evaluation </div><div class="clear"></div>
+<div class="linenb">&nbsp;6</div><div class="codeline">into a single residual neural network and learning solely through self-play, </div><div class="clear"></div>
+<div class="linenb">&nbsp;7</div><div class="codeline">eliminating reliance on human game data. Inspired by this approach, the development </div><div class="clear"></div>
+<div class="linenb">&nbsp;8</div><div class="codeline">of a Carcassonne AI agent utilized a custom-built game engine designed for </div><div class="clear"></div>
+<div class="linenb">&nbsp;9</div><div class="codeline">high computational efficiency and concurrency. The agent employs Monte Carlo Tree Search (MCTS) </div><div class="clear"></div>
+<div class="linenb">10</div><div class="codeline">to navigate the game’s high branching factor and integrates policy and value-based </div><div class="clear"></div>
+<div class="linenb">11</div><div class="codeline">evaluations for decision-making. Baseline strategies, such as greedy and random tactics, </div><div class="clear"></div>
+<div class="linenb">12</div><div class="codeline">were implemented for performance comparison. The system design includes training </div><div class="clear"></div>
+<div class="linenb">13</div><div class="codeline">environments and visualization tools, enabling detailed analysis of gameplay. </div><div class="clear"></div>
+<div class="linenb">14</div><div class="codeline">This work lays a foundation for the development of an agent capable of professional play.</div><div class="clear"></div>
+<div class="linenb">15</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">16</div><div class="codeline">\small</div><div class="clear"></div>
+<div class="linenb">17</div><div class="codeline"><span class="keyword1">\textbf</span>{<span class="keyword1">\textit</span>{Keywords:}} machine learning, reinforcement learning, MCTS, board games</div><div class="clear"></div>
+</div>
+<h2 class="filename">sections/results.tex</h2>
+
+<p>Found 4 warning(s)</p>
+<div class="original-file">
+<div class="linenb">&nbsp;1</div><div class="codeline">\<span class="highlight-sh" title="This section is very short (about 116 words). You should consider merging it with another section or make it longer. [sh:seclen]">section</span>{Results}</div><div class="clear"></div>
+<div class="linenb">&nbsp;2</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;3</div><div class="codeline">The experiment results are presented as a <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [chart, charts, kart, karts, Chart, chart X] (51) [lt:en:MORFOLOGIK_RULE_EN_GB]">char<span class="highlight-sh" title="Add a space before citation or reference. [sh:c:001]">t\ref</span>{fig:Results}</span> containing the amount of </div><div class="clear"></div>
+<div class="linenb">&nbsp;4</div><div class="codeline">points each agent was able to get while playing against the other agents. The agents are</div><div class="clear"></div>
+<div class="linenb">&nbsp;5</div><div class="codeline">RandomAgent, GreedyAgent, RLAgent.</div><div class="clear"></div>
+<div class="linenb">&nbsp;6</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;7</div><div class="codeline"><span class="keyword2">\begin{figure}</span>[h]</div><div class="clear"></div>
+<div class="linenb">&nbsp;8</div><div class="codeline">	<span class="keyword1">\includegraphics</span>[width=\linewidth]{figures/chart}</div><div class="clear"></div>
+<div class="linenb">&nbsp;9</div><div class="codeline">	<span class="keyword1">\caption</span>{Experiment results. On the x-axis are the agents (starting players) being evaluated and on the y-axis the average amount of points earned during the experiments.}</div><div class="clear"></div>
+<div class="linenb">10</div><div class="codeline">	<span class="keyword1">\label</span>{fig:Results}</div><div class="clear"></div>
+<div class="linenb">11</div><div class="codeline"><span class="keyword2">\end{figure}</span></div><div class="clear"></div>
+<div class="linenb">12</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">13</div><div class="codeline">The <span class="highlight" title="The adjective 'above-mentioned' is spelled with a hyphen.. Suggestions: [above-mentioned] (214) [lt:en:ABOVE_MENTIONED]">above mentioned</span> results show that the engine's performance issues heavily</div><div class="clear"></div>
+<div class="linenb">14</div><div class="codeline">impacted the ability of the agent based on reinforcement learning to learn the game.</div><div class="clear"></div>
+<div class="linenb">15</div><div class="codeline">Based on this results team decided the next steps should be to improve the engine's</div><div class="clear"></div>
+<div class="linenb">16</div><div class="codeline">throughput as to increase the learning rate of the agent.</div><div class="clear"></div>
+</div>
+<h2 class="filename">sections/agent_architecture.tex</h2>
+
+<p>Found 4 warning(s)</p>
+<div class="original-file">
+<div class="linenb">&nbsp;1</div><div class="codeline"><span class="keyword1">\section</span>{Agent Architecture}</div><div class="clear"></div>
+<div class="linenb">&nbsp;2</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;3</div><div class="codeline">The agent was implemented using Python due to the availability of useful libraries. </div><div class="clear"></div>
+<div class="linenb">&nbsp;4</div><div class="codeline">To aid decision-making it is using a Monte Carlo Tree Search (MCTS) algorithm. </div><div class="clear"></div>
+<div class="linenb">&nbsp;5</div><div class="codeline">It consists of the base module Tree used to manage the traversal process and </div><div class="clear"></div>
+<div class="linenb">&nbsp;6</div><div class="codeline">the Node representing each state in the search tree. Together, these classes </div><div class="clear"></div>
+<div class="linenb">&nbsp;7</div><div class="codeline">provide a basis for exploration and evaluation interfaces of possible game actions.</div><div class="clear"></div>
+<div class="linenb">&nbsp;8</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;9</div><div class="codeline">The Tree class initializes an agent with its initial game state and provides the </div><div class="clear"></div>
+<div class="linenb">10</div><div class="codeline">communication with the environment using the GameDispatch object, which manages </div><div class="clear"></div>
+<div class="linenb">11</div><div class="codeline">the underlying game engine. Tree is populated iteratively until one of the </div><div class="clear"></div>
+<div class="linenb">12</div><div class="codeline">postconditions is reached (either time elapsed or maximum number of iterations). </div><div class="clear"></div>
+<div class="linenb">13</div><div class="codeline">During the expansion phase in the MCTS algorithm, the Upper Confidence Bound (UCB) </div><div class="clear"></div>
+<div class="linenb">14</div><div class="codeline">is used to select the most promising child nodes. This formula is used to obtain </div><div class="clear"></div>
+<div class="linenb">15</div><div class="codeline">the balance between exploration of less-visited nodes and the ones that proved to yield <span class="highlight" title="A determiner may be missing.. Suggestions: [the highest] (1001) [lt:en:THE_SUPERLATIVE]">highest</span> rewards.</div><div class="clear"></div>
+<div class="linenb">16</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">17</div><div class="codeline">The core of the <span class="highlight" title="The noun 'decision-making' (= the process of deciding something) is spelled with a hyphen.. Suggestions: [decision-making] (1035) [lt:en:DECISION_MAKING]">decision making</span> is a combination of two evaluation metrics. </div><div class="clear"></div>
+<div class="linenb">18</div><div class="codeline">One is calculated during selection (policy) and the other during expansion (value). </div><div class="clear"></div>
+<div class="linenb">19</div><div class="codeline">As an input they take a serialized game state represented as a binary mask and both </div><div class="clear"></div>
+<div class="linenb">20</div><div class="codeline">return respective evaluation scores reduced by discount factor, which is used to </div><div class="clear"></div>
+<div class="linenb">21</div><div class="codeline">prioritize actions that provide the best short-term rewards during this process.</div><div class="clear"></div>
+<div class="linenb">22</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">23</div><div class="codeline">Finally, after exploration and expansion is completed the best action is determined </div><div class="clear"></div>
+<div class="linenb">24</div><div class="codeline">by evaluation of the child nodes of the root. It is selected by calculating the </div><div class="clear"></div>
+<div class="linenb">25</div><div class="codeline">average cumulative reward (Q value) of their corresponding subtrees. </div><div class="clear"></div>
+<div class="linenb">26</div><div class="codeline">The result of the successful search is the most promising action chosen by </div><div class="clear"></div>
+<div class="linenb">27</div><div class="codeline">the agent to be submitted as an actual move to the engine. </div><div class="clear"></div>
+<div class="linenb">28</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">29</div><div class="codeline">This whole structure was inspired by the implementation of AlphaGo Zero, </div><div class="clear"></div>
+<div class="linenb">30</div><div class="codeline">and it allows for an efficient and universal training process, since </div><div class="clear"></div>
+<div class="linenb">31</div><div class="codeline">it is well suited for solving complex decision-making tasks in games like <span class="highlight-spelling" title="Possible spelling mistake found.. Suggestions: [Carcassonne] (2021) [lt:en:MORFOLOGIK_RULE_EN_GB]">Carccassone</span>. </div><div class="clear"></div>
+<div class="linenb">32</div><div class="codeline">Based on this architecture, the team prepared agents using different </div><div class="clear"></div>
+<div class="linenb">33</div><div class="codeline">tactics (<span class="highlight-sh" title="Use a backslash or comma after the second period; otherwise LaTeX will think it is a full stop ending a sentence. [sh:011]">e.g. </span>greedy method and random selection) which later will be used to </div><div class="clear"></div>
+<div class="linenb">34</div><div class="codeline">measure performance of a neural network agent and provide a baseline for comparison.</div><div class="clear"></div>
+<div class="linenb">35</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+</div>
+<h2 class="filename">sections/introduction.tex</h2>
+
+<p>Found 1 warning(s)</p>
+<div class="original-file">
+<div class="linenb">&nbsp;1</div><div class="codeline"><span class="keyword1">\section</span>{Introduction}</div><div class="clear"></div>
+<div class="linenb">&nbsp;2</div><div class="codeline"><span class="keyword1">\label</span>{chap:introduction}</div><div class="clear"></div>
+<div class="linenb">&nbsp;3</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">&nbsp;4</div><div class="codeline">In 2016 the world heard about a computer program named AlphaGo that in October 2015</div><div class="clear"></div>
+<div class="linenb">&nbsp;5</div><div class="codeline">won five to zero with Fan Hui, a Go professional and three-time European Champion. Later,</div><div class="clear"></div>
+<div class="linenb">&nbsp;6</div><div class="codeline">in March 2016 that same AI system won four to one with Lee Sedol, widely considered the</div><div class="clear"></div>
+<div class="linenb">&nbsp;7</div><div class="codeline">greatest player of that decade. Those revelations were groundbreaking considering that Go</div><div class="clear"></div>
+<div class="linenb">&nbsp;8</div><div class="codeline">was regarded as a major challenge for artificial intelligence. And yet AlphaGo managed not</div><div class="clear"></div>
+<div class="linenb">&nbsp;9</div><div class="codeline">only to master this game but also to devise innovative moves unknown to humans before \cite{AlphaGoBlog}.</div><div class="clear"></div>
+<div class="linenb">10</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">11</div><div class="codeline">Since then, we have noticed rapid development in this area. A crucial milestone was</div><div class="clear"></div>
+<div class="linenb">12</div><div class="codeline">the creation of AlphaGo Zero which, in contrast to its predecessors, used only reinforcement</div><div class="clear"></div>
+<div class="linenb">13</div><div class="codeline">learning during training and yet managed to outperform <span class="highlight" title="Consider using 'all the'.. Suggestions: [all the] (782) [lt:en:ALL_OF_THE]">all of the</span> older versions in only forty</div><div class="clear"></div>
+<div class="linenb">14</div><div class="codeline">days \cite{AlphaGoZeroBlog}. That opened up opportunities for AI to master other games like chess </div><div class="clear"></div>
+<div class="linenb">15</div><div class="codeline">or shogi.</div><div class="clear"></div>
+<div class="linenb">16</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">17</div><div class="codeline">As a result, the question arises whether it is possible to create an artificial intelligence</div><div class="clear"></div>
+<div class="linenb">18</div><div class="codeline">agent that can repeat AlphaGo and AlphaGo Zero's success in the area of more complex</div><div class="clear"></div>
+<div class="linenb">19</div><div class="codeline">board games like <span class="keyword1">\textit</span>{Settlers of Catan}, <span class="keyword1">\textit</span>{Pandemic}, <span class="keyword1">\textit</span>{Azul}, etc. This </div><div class="clear"></div>
+<div class="linenb">20</div><div class="codeline">project attempts to answer this question by preparing an agent for the <span class="keyword1">\textit</span>{Carcassonne} game </div><div class="clear"></div>
+<div class="linenb">21</div><div class="codeline">using reinforcement learning and analysing its behaviour and ability to make optimal </div><div class="clear"></div>
+<div class="linenb">22</div><div class="codeline">decisions in a dynamic environment.</div><div class="clear"></div>
+<div class="linenb">23</div><div class="codeline">&nbsp;</div><div class="clear"></div>
+<div class="linenb">24</div><div class="codeline">The following sections present the achieved goals. The section `Game engine architecture' </div><div class="clear"></div>
+<div class="linenb">25</div><div class="codeline">presents the architecture of the game engine, its components and communication within the entire system. `Agent architecture' </div><div class="clear"></div>
+<div class="linenb">26</div><div class="codeline">concentrates on describing the structure of the game agent and neural network input and</div><div class="clear"></div>
+<div class="linenb">27</div><div class="codeline">output structure. Next, the section `Evaluation' describes a design of the conducted experiment </div><div class="clear"></div>
+<div class="linenb">28</div><div class="codeline">and the analysis of the agent's performance and its strategies.</div><div class="clear"></div>
+</div>
+<hr/>
+Output produced by TeXtidote v0.8.2, &copy; 2018-2020 Sylvain Hall&eacute; - All rights reserved.<br/>
+See the <a href="https://sylvainhalle.github.io/textidote">TeXtidote website</a> for more information.
+</body>
+</html>
